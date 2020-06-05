@@ -35,7 +35,7 @@ static Smear::Acceptance::Zone zoneEta(double etamin, double etamax) {
  Note: you must gSystem->Load("libeicsmear") BEFORE loading this script,
  as ROOT needs to understand what a Smear::Detector is.
  */
-Smear::Detector BuildDetector() {
+Smear::Detector BuildeSTAR_0_0() {
   // Recall that the parameterisations passed to Smear::Device objects
   // give sigma(X) *not* sigma(X) / X
   // Electromagnetic calorimeter in the electron (east) direction, -4 < eta < -2
