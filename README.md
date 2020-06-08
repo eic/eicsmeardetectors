@@ -14,8 +14,11 @@ When in doubt, please contact your system administrator.
 #### Official parameterizations ####
 These are recommended for Yellow Report work. This collection will grow as the detector matrix gets upgraded and concrete designs are parameterized.
 
+XXX
+
 |Name| min. version | Details and Comments |
 |---| ---| --- |
+|MatrixDetector 0.1| 1.0.4 | Based on the [Detector Matrix](https://physdiv.jlab.org/DetectorMatrix) from June 8 2020|
 |HandBook 1.2| 1.0.4 | Based on [HANDBOOK v1.2 (Feb 20, 2020)](http://www.eicug.org/web/content/detector-rd) with adaptations where information was incomplete or missing|
 |PerfectDetector| 1.0.4 | Perfect detection and PID in \|&eta;\| < 15 |
 
