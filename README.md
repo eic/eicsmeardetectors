@@ -18,8 +18,8 @@ These are recommended for Yellow Report work. This collection will grow as the d
 
 |Name| min. version | Details and Comments |
 | --- | --- | --- |
-|MatrixDetector 0.1 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | 1.0.4 | Based on the [Detector Matrix](https://physdiv.jlab.org/DetectorMatrix) from June 16 2020|
-|HandBook 1.2| 1.0.4 | Based on [HANDBOOK v1.2 (Feb 20, 2020)](http://www.eicug.org/web/content/detector-rd) with adaptations where information was incomplete or missing|
+|MatrixDetector 0.1 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | 1.0.4 | Based on the [Detector Matrix](https://physdiv.jlab.org/DetectorMatrix) from June 16 2020. This is the most up-to-date version released by the YR DWG. Note that the HandBook version made assumptions on constant terms and angular resolution where they were/are missing in the matrix. The implementation here explicitly does not do so, and aims to be completely faithful (with perfect angular resolution) to the configuration available online .|
+|HandBook 1.2| 1.0.4 | Based on [HANDBOOK v1.2 (Feb 20, 2020)](http://www.eicug.org/web/content/detector-rd) with adaptations where information was incomplete or missing. The MatrixDetector should be considered as the official version. |
 |PerfectDetector| 1.0.4 | Perfect detection and PID in \|&eta;\| < 15 |
 
 #### Unofficial parameterizations ####
