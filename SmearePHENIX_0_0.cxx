@@ -269,7 +269,7 @@ void EPhenixMomentum::Draw(Option_t* option) {
    Note: you must gSystem->Load("libeicsmear") BEFORE loading this script,
    as ROOT needs to understand what a Smear::Detector is.
 */
-Smear::Detector SmearePHENIX_0_0(bool multipleScattering) {
+Smear::Detector BuildPHENIX_0_0(bool multipleScattering) {
   EPhenixMomentum momentum(multipleScattering);
   // Define acceptance zones for different ePHENIX regions:
   // - electron-going: -4 < eta < -1
