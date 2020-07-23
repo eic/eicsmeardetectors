@@ -16,8 +16,6 @@
 
 // declare static --> local to this file, won't clash with others
 static double ThetaFromEta( const double eta );
-static double EtaFromTheta( const double theta );
-
 
 Smear::Detector BuildBeAST_0_1() {
 
@@ -120,69 +118,65 @@ Smear::Detector BuildBeAST_0_1() {
   // Calorimeter resolution usually given as sigma_E/E = const% + stocastic%/Sqrt{E}
   // EIC Smear needs absolute sigma: sigma_E = Sqrt{const*const*E*E + stoc*stoc*E}
   // eta = -4.5 -- -2
-   Smear::Acceptance::Zone emBck(ThetaFromEta ( -2 ),ThetaFromEta ( -4.5 ));
-   Smear::Device emcalBck(Smear::kE, "sqrt(0.01*0.01*E*E + 0.015*0.015*E)");
-   emcalBck.Accept.AddZone(emBck);
-   emcalBck.Accept.SetGenre(Smear::kElectromagnetic);
-   det.AddDevice(emcalBck);
-   
-   // eta = -2 -- -1
-   Smear::Acceptance::Zone emMidBck(ThetaFromEta ( -1 ),ThetaFromEta ( -2 ));
-   Smear::Device emcalMidBck(Smear::kE, "sqrt(0.01*0.01*E*E + 0.07*0.07*E)");
-   emcalMidBck.Accept.AddZone(emMidBck);
-   emcalMidBck.Accept.SetGenre(Smear::kElectromagnetic);
-   det.AddDevice(emcalMidBck);
+  Smear::Acceptance::Zone emBck(ThetaFromEta ( -2 ),ThetaFromEta ( -4.5 ));
+  Smear::Device emcalBck(Smear::kE, "sqrt(0.01*0.01*E*E + 0.015*0.015*E)");
+  emcalBck.Accept.AddZone(emBck);
+  emcalBck.Accept.SetGenre(Smear::kElectromagnetic);
+  det.AddDevice(emcalBck);
 
-   // eta = -1 -- 1
-   Smear::Acceptance::Zone emMid(ThetaFromEta ( 1 ),ThetaFromEta ( -1 ));
-   Smear::Device emcalMid(Smear::kE, "sqrt(0.01*0.01*E*E + 0.10*0.10*E)");
-   emcalMid.Accept.AddZone(emMid);
-   emcalMid.Accept.SetGenre(Smear::kElectromagnetic);
-   det.AddDevice(emcalMid);
+  // eta = -2 -- -1
+  Smear::Acceptance::Zone emMidBck(ThetaFromEta ( -1 ),ThetaFromEta ( -2 ));
+  Smear::Device emcalMidBck(Smear::kE, "sqrt(0.01*0.01*E*E + 0.07*0.07*E)");
+  emcalMidBck.Accept.AddZone(emMidBck);
+  emcalMidBck.Accept.SetGenre(Smear::kElectromagnetic);
+  det.AddDevice(emcalMidBck);
 
-   // eta = 1 -- 4.5
-   Smear::Acceptance::Zone emFwd(ThetaFromEta ( 4.5 ),ThetaFromEta ( 1 ));
-   Smear::Device emcalFwd(Smear::kE, "sqrt(0.01*0.01*E*E + 0.07*0.07*E)");
-   emcalFwd.Accept.AddZone(emFwd);
-   emcalFwd.Accept.SetGenre(Smear::kElectromagnetic);
-   det.AddDevice(emcalFwd);
+  // eta = -1 -- 1
+  Smear::Acceptance::Zone emMid(ThetaFromEta ( 1 ),ThetaFromEta ( -1 ));
+  Smear::Device emcalMid(Smear::kE, "sqrt(0.01*0.01*E*E + 0.10*0.10*E)");
+  emcalMid.Accept.AddZone(emMid);
+  emcalMid.Accept.SetGenre(Smear::kElectromagnetic);
+  det.AddDevice(emcalMid);
 
-   
+  // eta = 1 -- 4.5
+  Smear::Acceptance::Zone emFwd(ThetaFromEta ( 4.5 ),ThetaFromEta ( 1 ));
+  Smear::Device emcalFwd(Smear::kE, "sqrt(0.01*0.01*E*E + 0.07*0.07*E)");
+  emcalFwd.Accept.AddZone(emFwd);
+  emcalFwd.Accept.SetGenre(Smear::kElectromagnetic);
+  det.AddDevice(emcalFwd);
 
   // HCal
   // -----
-   // Create the Forward/Backward Hadron Calorimeter
-   // eta = -4.5 -- -1
-   Smear::Acceptance::Zone hBck(ThetaFromEta ( -1 ),ThetaFromEta ( -4.5 ));
-   Smear::Device hcalBck(Smear::kE, "sqrt(0.015*0.015*E*E + 0.50*0.50*E)");
-   hcalBck.Accept.AddZone(hBck);
-   hcalBck.Accept.SetGenre(Smear::kHadronic);
-   det.AddDevice(hcalBck);
-		    
-   // eta = 1 -- 4.5
-   Smear::Acceptance::Zone hFwd(ThetaFromEta ( 4.5 ),ThetaFromEta ( 1 ));
-   Smear::Device hcalFwd(Smear::kE, "sqrt(0.015*0.015*E*E + 0.50*0.50*E)");
-   hcalFwd.Accept.AddZone(hFwd);
-   hcalFwd.Accept.SetGenre(Smear::kHadronic);
-   det.AddDevice(hcalFwd);
-   
-   // Create the Hypothetical Mid Rap Calorimeter
-   // eta = -1 -- 1
-   Smear::Acceptance::Zone hMid(ThetaFromEta ( 1 ),ThetaFromEta ( -1 ));
-   //Smear::Device hcalMid(Smear::kE, "sqrt(0.07*0.07*E*E + 0.85*0.85*E)"); // ~CMS
-   Smear::Device hcalMid(Smear::kE, "sqrt(0.02*0.02*E*E + 0.35*0.35*E)"); // ~Zeus
-   hcalMid.Accept.AddZone(hMid);
-   hcalMid.Accept.SetGenre(Smear::kHadronic);
-   det.AddDevice(hcalMid);
+  // Create the Forward/Backward Hadron Calorimeter
+  // eta = -4.5 -- -1
+  Smear::Acceptance::Zone hBck(ThetaFromEta ( -1 ),ThetaFromEta ( -4.5 ));
+  Smear::Device hcalBck(Smear::kE, "sqrt(0.015*0.015*E*E + 0.50*0.50*E)");
+  hcalBck.Accept.AddZone(hBck);
+  hcalBck.Accept.SetGenre(Smear::kHadronic);
+  det.AddDevice(hcalBck);
 
+  // eta = 1 -- 4.5
+  Smear::Acceptance::Zone hFwd(ThetaFromEta ( 4.5 ),ThetaFromEta ( 1 ));
+  Smear::Device hcalFwd(Smear::kE, "sqrt(0.015*0.015*E*E + 0.50*0.50*E)");
+  hcalFwd.Accept.AddZone(hFwd);
+  hcalFwd.Accept.SetGenre(Smear::kHadronic);
+  det.AddDevice(hcalFwd);
 
-   // // Create PID based on Hermes RICH.
-   // Smear::ParticleID rich("PIDMatrix.dat");
-   // det.AddDevice(rich);
+  // Create the Hypothetical Mid Rap Calorimeter
+  // eta = -1 -- 1
+  Smear::Acceptance::Zone hMid(ThetaFromEta ( 1 ),ThetaFromEta ( -1 ));
+  //Smear::Device hcalMid(Smear::kE, "sqrt(0.07*0.07*E*E + 0.85*0.85*E)"); // ~CMS
+  Smear::Device hcalMid(Smear::kE, "sqrt(0.02*0.02*E*E + 0.35*0.35*E)"); // ~Zeus
+  hcalMid.Accept.AddZone(hMid);
+  hcalMid.Accept.SetGenre(Smear::kHadronic);
+  det.AddDevice(hcalMid);
 
-   return det;
+  // // Create PID based on Hermes RICH.
+  // Smear::ParticleID rich("PIDMatrix.dat");
+  // det.AddDevice(rich);
+
+  return det;
 }
-
 
 // -------------------------------------------------------------------
 double ThetaFromEta( const double eta ) {
@@ -192,16 +186,3 @@ double ThetaFromEta( const double eta ) {
   throw std::runtime_error("ThetaFromEta called with NaN or Inf");
   return -1;
 }
-
-// -------------------------------------------------------------------
-double EtaFromTheta( const double theta ) {
-  // The default value of -19 is used in the main eRHIC code,
-  // so use that for consistency.
-  double eta = -19.;
-  if (theta > 0. && theta < TMath::Pi() && !std::isnan(theta) && !std::isinf(theta)) {
-    eta = -log(tan(theta / 2.));
-  }
-  return eta;
-}
-// -------------------------------------------------------------------
-
