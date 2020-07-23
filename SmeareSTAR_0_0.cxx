@@ -1,24 +1,36 @@
 /**
- \file SmeareSTAR_0_0.cxx
- Example smearing script for the eSTAR detector
+   \file SmeareSTAR_0_0.cxx
+   Example smearing script for the eSTAR detector
 
- \author    Thomas Burton
- \date      2014-03-21
- \copyright 2014 Brookhaven National Lab
- */
+   \author    Thomas Burton
+   \date      2014-03-21
+   \copyright 2014 Brookhaven National Lab
+*/
+
+#include "eicsmear/erhic/VirtualParticle.h"
+#include "eicsmear/smear/Acceptance.h"
+#include "eicsmear/smear/Device.h"
+#include "eicsmear/smear/Detector.h"
+#include "eicsmear/smear/Smearer.h"
+#include "eicsmear/smear/ParticleMCS.h"
+#include "eicsmear/smear/PerfectID.h"
+#include <eicsmear/smear/Smear.h>
+#include <eicsmear/erhic/ParticleMC.h>
+#include "Math/Vector4D.h"
+
 
 /**
- Helper function to convert eta to theta (radians)
- 
- Detector acceptances require theta, not eta
- */
+   Helper function to convert eta to theta (radians)
+
+   Detector acceptances require theta, not eta
+*/
 static double etaToTheta(double eta) {
   return 2. * std::atan(std::exp(-eta));
 }
 
 /**
- Helper function producing a zone in eta
- */
+   Helper function producing a zone in eta
+*/
 static Smear::Acceptance::Zone zoneEta(double etamin, double etamax) {
   // First two arguments to Zone constructor are (theta-min, theta-max)
   // Note that eta-min --> theta-max and eta-max --> theta-min
@@ -26,15 +38,15 @@ static Smear::Acceptance::Zone zoneEta(double etamin, double etamax) {
 }
 
 /**
- Smearing parameterisations for the eSTAR detector.
+   Smearing parameterisations for the eSTAR detector.
 
- Based on parameterisations given in Zhangbu Xu's talk here (slide 5):
- https://wiki.bnl.gov/conferences/index.php/January_2014
- This includes momentum and energy resolutions, but no particle identification.
- 
- Note: you must gSystem->Load("libeicsmear") BEFORE loading this script,
- as ROOT needs to understand what a Smear::Detector is.
- */
+   Based on parameterisations given in Zhangbu Xu's talk here (slide 5):
+   https://wiki.bnl.gov/conferences/index.php/January_2014
+   This includes momentum and energy resolutions, but no particle identification.
+
+   Note: you must gSystem->Load("libeicsmear") BEFORE loading this script,
+   as ROOT needs to understand what a Smear::Detector is.
+*/
 Smear::Detector BuildeSTAR_0_0() {
   // Recall that the parameterisations passed to Smear::Device objects
   // give sigma(X) *not* sigma(X) / X
@@ -48,7 +60,7 @@ Smear::Detector BuildeSTAR_0_0() {
   //                                   \oplus (pZ/pT)x(0.2%/p/beta)
   // beta = p/E so 0.2%/p/beta = 0.2%E/p^2
   Smear::Device eastTracking("P",
-    "P/(pT/pZ-1/6)*(0.0045*pT+0.003)+pZ/pT*0.002*E/P");
+			     "P/(pT/pZ-1/6)*(0.0045*pT+0.003)+pZ/pT*0.002*E/P");
   eastTracking.Accept.AddZone(zoneEta(-2., -1.));
   eastTracking.Accept.SetCharge(Smear::kCharged);
   // Electromagnetic calorimeter in the barrel region, -1 < eta < 1
@@ -63,7 +75,7 @@ Smear::Detector BuildeSTAR_0_0() {
   // Tracking in hadron (west) direction, 1 < eta < 1.7
   // From Zhangbu's talk: as for east tracking, except 1/4 instead of 1/6
   Smear::Device westTracking("P",
-    "P/(pT/pZ-1/4)*(0.0045*pT+0.003)+pZ/pT*0.002*E/P");
+			     "P/(pT/pZ-1/4)*(0.0045*pT+0.003)+pZ/pT*0.002*E/P");
   westTracking.Accept.SetCharge(Smear::kCharged);
   westTracking.Accept.AddZone(zoneEta(1., 1.7));
   // Electromagnetic calorimeter in the hadron (west) direction, 1 < eta < 2
@@ -86,7 +98,7 @@ Smear::Detector BuildeSTAR_0_0() {
   // PID performance is unparameterised as of now
   Smear::PerfectID pid;
   // Combine the devices into a detector.
-	Smear::Detector estar;
+  Smear::Detector estar;
   estar.AddDevice(eastEcal);
   estar.AddDevice(barrelEcal);
   estar.AddDevice(westEcal);
