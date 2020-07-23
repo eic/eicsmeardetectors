@@ -9,12 +9,12 @@
 
 /*
   Example smearing script for the ePHENIX detector.
- 
+
   It defines:
   - EPhenixMomentum: a special smearing class for the ePHENIX momentum
   performance
   - BuildDetector: a function to generate the full ePHENIX detector description
- 
+
   This script must be compiled in ROOT before running.
   Therefore, you must first make sure that
   (1) libeicsmear is loaded, via
@@ -48,7 +48,7 @@
 
 /**
    Smearing class describing ePHENIX momentum resolution.
- 
+
    The ePHENIX momentum resolution is too complicated to handle with a simple
    parameterisation via the Smear::Device class.
    Therefore we define a custom Smearer class to implement the resolution.
@@ -63,7 +63,7 @@ public:
   virtual ~EPhenixMomentum();
   /**
      Constructor.
-   
+
      If multipleScattering is true, apply the multiple scattering resolution in
      the region where it is known, 2 < eta < 4.
      Otherwise apply only the linear resolution term.
@@ -71,14 +71,14 @@ public:
   EPhenixMomentum(bool multipleScattering = true);
   /**
      Initialise the object
-   
+
      This is called automatically by the smearing routine, so the user needn't
      call it themselves before smearing.
   */
   void Initialise();
   /**
      Returns a pointer to the graphs.
-   
+
      Initialises all graphs if not yet done.
   */
   TMultiGraph* Graphs();
@@ -93,7 +93,7 @@ public:
                      Smear::ParticleMCS& smeared);
   /**
      Return sigma(P) due to multiple scattering
-   
+
      Note this means sigma(P) (GeV) *not* sigma(P)/P
   */
   virtual double computeMultipleScattering(
@@ -105,7 +105,7 @@ public:
 
   /**
      Helper function to convert eta to theta (radians)
-     
+
      Detector acceptances require theta, not eta
   */
   static double etaToTheta(double eta) {
@@ -257,11 +257,11 @@ void EPhenixMomentum::Draw(Option_t* option) {
 
 /**
    Smearing parameterisations for the ePHENIX detector.
- 
+
    These parameterisations are non-exhaustive: they do not cover elements such
    as particle identification, and they are only for the central elements of
    the detector - essentially, just TPC and B/EEMC.
- 
+
    If multipleScattering == true, apply multiple scattering term to momentum
    resolution (currently only implemented for 2 < eta < 4). Otherwise just use
    the linear resolution term.
@@ -269,7 +269,7 @@ void EPhenixMomentum::Draw(Option_t* option) {
    Note: you must gSystem->Load("libeicsmear") BEFORE loading this script,
    as ROOT needs to understand what a Smear::Detector is.
 */
-Smear::Detector BuildPHENIX_0_0(bool multipleScattering) {
+Smear::Detector BuildePHENIX_0_0(bool multipleScattering) {
   EPhenixMomentum momentum(multipleScattering);
   // Define acceptance zones for different ePHENIX regions:
   // - electron-going: -4 < eta < -1
@@ -346,9 +346,9 @@ Smear::Detector BuildPHENIX_0_0(bool multipleScattering) {
   Date: 	2 January, 2014 11:01:39 AM EST
   To: 	elke-caroline aschenauer <elke@bnl.gov>, Thomas P Burton <tpb@bnl.gov>
 
-  Hello Elke, Thomas, 
+  Hello Elke, Thomas,
 
-  Ok, the linear term in momentum resolution (as in the plot I sent you before): 
+  Ok, the linear term in momentum resolution (as in the plot I sent you before):
 
   eta        d(1/p) in (1/GeV)
   -3.0       0.010500
@@ -431,11 +431,11 @@ Smear::Detector BuildPHENIX_0_0(bool multipleScattering) {
   3.9       0.009680
   4.0       0.010500
 
-  As for multiple scattering term, what has been simulated so far is eta ranges 2-3 and 3-4. Numbers keep changing after inclusion of different material (associated with detectors and read-out). The current very conservative advice is to use 3% for eta=2-3; in eta=3-4, log of this term changes ~linearly from 3% at eta=3 to ~15% at eta=4. 
+  As for multiple scattering term, what has been simulated so far is eta ranges 2-3 and 3-4. Numbers keep changing after inclusion of different material (associated with detectors and read-out). The current very conservative advice is to use 3% for eta=2-3; in eta=3-4, log of this term changes ~linearly from 3% at eta=3 to ~15% at eta=4.
 
-  That's what we have for now. 
+  That's what we have for now.
 
-  Regards, 
+  Regards,
 
   Sasha.
 */
