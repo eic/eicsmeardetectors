@@ -7,7 +7,7 @@
 // http://www.eicug.org/web/sites/default/files/EIC_HANDBOOK_v1.2.pdf
 
 // Additional details from discussions within the calorimetry working group:
-// 
+//
 // >    These are two configuration for hadron endcap we talked today to consider.
 // > Base configuration:
 // > EM - W/ScFi, granularity 2.5 cm x 2.5 cm, 12% stochastic, 2% constant terms
@@ -37,7 +37,6 @@
 
 // declare static --> local to this file, won't clash with others
 static double ThetaFromEta( const double eta );
-static double EtaFromTheta( const double theta );
 
 Smear::Detector BuildHandBook_1_2() {
 
@@ -67,7 +66,7 @@ Smear::Detector BuildHandBook_1_2() {
   // from the smeared particles directly.
   det.SetEventKinematicsCalculator("NM DA JB");
 
-    
+
   // IMPORTANT: There are two traps (will be addressed in future releases):
   //            1) If you smear E but don't provide phi, theta smearers, those values will be
   //               set to 0, not to a fault value and not to the truth level
@@ -88,21 +87,21 @@ Smear::Detector BuildHandBook_1_2() {
   Smear::Acceptance::Zone AngleZoneHadronic(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
   Smear::Device SmearThetaHadronic(Smear::kTheta, "0.001");
   SmearThetaHadronic.Accept.AddZone(AngleZoneHadronic);
-  SmearThetaHadronic.Accept.SetGenre(Smear::kHadronic);    
+  SmearThetaHadronic.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(SmearThetaHadronic);
-  
+
   Smear::Device SmearPhiHadronic(Smear::kPhi, "0.001");
   SmearPhiHadronic.Accept.AddZone(AngleZoneHadronic);
   SmearPhiHadronic.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(SmearPhiHadronic);
-  
+
   // emcal stretches to -4.5 < eta < 4.5
   Smear::Acceptance::Zone AngleZoneEmcal(ThetaFromEta ( 4.5 ),ThetaFromEta ( -4.5 ));
   Smear::Device SmearThetaEmcal(Smear::kTheta, "0.001");
   SmearThetaEmcal.Accept.AddZone(AngleZoneEmcal);
-  SmearThetaEmcal.Accept.SetGenre(Smear::kElectromagnetic);    
+  SmearThetaEmcal.Accept.SetGenre(Smear::kElectromagnetic);
   det.AddDevice(SmearThetaEmcal);
-  
+
   Smear::Device SmearPhiEmcal(Smear::kPhi, "0.001");
   SmearPhiEmcal.Accept.AddZone(AngleZoneEmcal);
   SmearPhiEmcal.Accept.SetGenre(Smear::kElectromagnetic);
@@ -160,18 +159,18 @@ Smear::Detector BuildHandBook_1_2() {
   // TODO: Add proton spectrometer:  eta>6.2: sigma_intrinsic(|t|)/|t| < 1%; Acceptance: 0.2 < pT < 1.2 GeV/c
   // TODO: Add material budget X/X0 <~5%
   // TODO: Add vertexing: sigma_xyz ~ 20 microns, d0(z) ~ d0(r phi) ~ (20 microns)/(pT [GeV])  + 5 microns
-  
+
   // EM Calorimeters
   // ---------------
   // Note: Smear::kElectromagnetic == gamma + e. Does not include muons (good)
-  
+
   // Calorimeter resolution usually given as sigma_E/E = const% + stocastic%/Sqrt{E}
   // EIC Smear needs absolute sigma: sigma_E = Sqrt{const*const*E*E + stoc*stoc*E}
 
   // IMPORTANT: The Handbook table 2 does not provide constant terms,
   //            which may be important for some measurements.
   //            We adapted the handbook here to values provided by the calo DWG where available
-  
+
   // Back
   // eta = -4.5 -- -2
   // stoch. = 2%
@@ -194,7 +193,7 @@ Smear::Detector BuildHandBook_1_2() {
   EmcalMidBack.Accept.AddZone(EmcalMidBackZone);
   EmcalMidBack.Accept.SetGenre(Smear::kElectromagnetic);
   det.AddDevice(EmcalMidBack);
-  
+
   // Forward
   // eta = -1 -- 4.5
   // stoch. = 10-12%.
@@ -211,15 +210,15 @@ Smear::Detector BuildHandBook_1_2() {
   // Smear::PerfectID pid;
   // pid.Accept.AddZone(acceptall);
   // det.AddDevice( pid );
-  
+
   // Hadronic  Calorimeters
   // ----------------------
   // IMPORTANT: The Handbook table 2 does not provide constant terms,
   //            which may be important for some measurements.
   //            The barrel options modeled after existing instruments will have one,
   //            leaving it at 0 otherwise
-  // Note: kHadronic == |pdg|>110. 
-    
+  // Note: kHadronic == |pdg|>110.
+
   // Back
   // eta = -3.5 -- -1
   // stoch. = 50%
@@ -229,7 +228,7 @@ Smear::Detector BuildHandBook_1_2() {
   HcalBack.Accept.AddZone(HcalBackZone);
   HcalBack.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(HcalBack);
-  
+
   // Barrel
   // Handbook: TBD
   // Providing two options
@@ -265,16 +264,3 @@ double ThetaFromEta( const double eta ) {
   throw std::runtime_error("ThetaFromEta called with NaN or Inf");
   return -1;
 }
-
-// -------------------------------------------------------------------
-double EtaFromTheta( const double theta ) {
-  // The default value of -19 is used in the main eRHIC code,
-  // so use that for consistency.
-  double eta = -19.;
-  if (theta > 0. && theta < TMath::Pi() && !std::isnan(theta) && !std::isinf(theta)) {
-    eta = -log(tan(theta / 2.));
-  }
-  return eta;
-}
-// -------------------------------------------------------------------
-
