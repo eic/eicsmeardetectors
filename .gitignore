@@ -55,3 +55,6 @@ build
 # ignore JetBrains ide project folder
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 .idea/
+
+# ignore doxygen
+doxygen
