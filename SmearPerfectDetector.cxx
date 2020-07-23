@@ -21,16 +21,11 @@ static double etaToTheta(const double eta) {
   return v.Theta();
 }
 
-//Convert and angle in degrees to one in radians.
-static double degreesToRadians(double degrees) {
-  return degrees / 180. * TMath::Pi();
-}
-
 //Build Detector
 Smear::Detector BuildPerfectDetector(){
 
   //Create Devices
-  Smear::Device energy(Smear::kE,"0"); //"0":Perfect Resolution                                                                               
+  Smear::Device energy(Smear::kE,"0"); //"0":Perfect Resolution
   Smear::Device momentum(Smear::kP,"0");
   Smear::Device theta(Smear::kTheta,"0");
   Smear::Device phi(Smear::kPhi,"0");
@@ -46,7 +41,7 @@ Smear::Detector BuildPerfectDetector(){
   //PID performance is unparameterised as of now
   Smear::PerfectID pid;
   pid.Accept.AddZone(acceptall);
-  
+
   //Create the detector and add devices
   Smear::Detector det;
   det.AddDevice(energy);
