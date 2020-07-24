@@ -2,13 +2,13 @@
 // https://physdiv.jlab.org/DetectorMatrix/
 // From June 16 2020
 
-// W.r.t. to the [Detector Requirements and R&D Handbook](http://www.eicug.org/web/sites/default/files/EIC_HANDBOOK_v1.2.pdf) there have been three changes. 
+// W.r.t. to the [Detector Requirements and R&D Handbook](http://www.eicug.org/web/sites/default/files/EIC_HANDBOOK_v1.2.pdf) there have been three changes.
 
 // For the Backward Detector the Tracking Resolution column was updated as follows:
 // eta=-3.5 - -2.5: sigma_p/p ~ 0.1%×p+2.0%   ->   sigma_p/p ~ 0.1%×p &oplus;  0.5%
 // eta=-2.5 - -2.0: sigma_p/p ~ 0.1%×p+1.0%   ->   sigma_p/p ~ 0.1%×p &oplus;  0.5%
-// eta=-2.0 - -1.0: sigma_p/p ~ 0.1%×p+1.0%   ->   sigma_p/p ~ 0.05%×p &oplus;  0.5% 
-// The abstract, reference files, and note sections of these fields have been updated accordingly. 
+// eta=-2.0 - -1.0: sigma_p/p ~ 0.1%×p+1.0%   ->   sigma_p/p ~ 0.05%×p &oplus;  0.5%
+// The abstract, reference files, and note sections of these fields have been updated accordingly.
 
 // Important Notes:
 // - The implementation of the original handbook matrix in SmearHandBook_1_2.cxx
@@ -18,7 +18,7 @@
 //   to the configuration available online.
 // - Where ranges are given, the more conservative number is chosen.
 // - Without available specifications, angular resolution is assumed to be perfect.
-// - 
+// -
 
 #include "eicsmear/erhic/VirtualParticle.h"
 #include "eicsmear/smear/Acceptance.h"
@@ -33,10 +33,8 @@
 
 // declare static --> local to this file, won't clash with others
 static double ThetaFromEta( const double eta );
-static double EtaFromTheta( const double theta );
 
 Smear::Detector BuildMatrixDetector_0_1() {
-
   gSystem->Load("libeicsmear");
 
   // Create the detector object to hold all devices
@@ -62,13 +60,12 @@ Smear::Detector BuildMatrixDetector_0_1() {
   // the calculation of smeared kinematics. Sophisticated calculations are best redone in user code
   // from the smeared particles directly.
   det.SetEventKinematicsCalculator("NM DA JB");
-    
+
   // IMPORTANT: There are two traps (will be addressed in future releases):
   //            1) If you smear E but don't provide phi, theta smearers, those values will be
   //               set to 0, not to a fault value and not to the truth level
   //            2) If you do provide such a smearer, pt and pz will be changed
   //               by a consistency enforcer in Detector::Smear()
-
 
 
   // Perfect phi and theta for all particles
@@ -77,21 +74,21 @@ Smear::Detector BuildMatrixDetector_0_1() {
   Smear::Acceptance::Zone AngleZoneHadronic(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
   Smear::Device SmearThetaHadronic(Smear::kTheta, "0.0");
   SmearThetaHadronic.Accept.AddZone(AngleZoneHadronic);
-  SmearThetaHadronic.Accept.SetGenre(Smear::kHadronic);    
+  SmearThetaHadronic.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(SmearThetaHadronic);
 
   Smear::Device SmearPhiHadronic(Smear::kPhi, "0.0");
   SmearPhiHadronic.Accept.AddZone(AngleZoneHadronic);
   SmearPhiHadronic.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(SmearPhiHadronic);
-  
+
   // emcal stretches to -4.5 < eta < 4.5
   Smear::Acceptance::Zone AngleZoneEmcal(ThetaFromEta ( 4.5 ),ThetaFromEta ( -4.5 ));
   Smear::Device SmearThetaEmcal(Smear::kTheta, "0.0");
   SmearThetaEmcal.Accept.AddZone(AngleZoneEmcal);
-  SmearThetaEmcal.Accept.SetGenre(Smear::kElectromagnetic);    
+  SmearThetaEmcal.Accept.SetGenre(Smear::kElectromagnetic);
   det.AddDevice(SmearThetaEmcal);
-  
+
   Smear::Device SmearPhiEmcal(Smear::kPhi, "0.0");
   SmearPhiEmcal.Accept.AddZone(AngleZoneEmcal);
   SmearPhiEmcal.Accept.SetGenre(Smear::kElectromagnetic);
@@ -139,11 +136,11 @@ Smear::Detector BuildMatrixDetector_0_1() {
   TrackFwd1P.Accept.AddZone(TrackFwd1Zone);
   TrackFwd1P.Accept.SetCharge(Smear::kCharged);
   det.AddDevice(TrackFwd1P);
-  
+
   // EM Calorimeters
   // ---------------
   // Note: Smear::kElectromagnetic == gamma + e. Does not include muons (good)
-  
+
   // Calorimeter resolution usually given as sigma_E/E = const% + stocastic%/Sqrt{E}
   // EIC Smear needs absolute sigma: sigma_E = Sqrt{const*const*E*E + stoc*stoc*E}
 
@@ -164,7 +161,7 @@ Smear::Detector BuildMatrixDetector_0_1() {
   EmcalMidBack.Accept.AddZone(EmcalMidBackZone);
   EmcalMidBack.Accept.SetGenre(Smear::kElectromagnetic);
   det.AddDevice(EmcalMidBack);
-  
+
   // Forward
   // eta = -1 -- 4.5
   // stoch. = 10-12%, use 12%
@@ -179,11 +176,11 @@ Smear::Detector BuildMatrixDetector_0_1() {
   // Smear::PerfectID pid;
   // pid.Accept.AddZone(acceptall);
   // det.AddDevice( pid );
-  
+
   // Hadronic  Calorimeters
   // ----------------------
-  // Note: kHadronic == |pdg|>110. 
-    
+  // Note: kHadronic == |pdg|>110.
+
   // Back
   // eta = -3.5 -- -1
   // stoch. = 50%
@@ -192,7 +189,7 @@ Smear::Detector BuildMatrixDetector_0_1() {
   HcalBack.Accept.AddZone(HcalBackZone);
   HcalBack.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(HcalBack);
-  
+
   // Barrel
   // eta = -1 -- 1
   // The matrix has nothing. As examples, one could turn to
@@ -233,16 +230,3 @@ double ThetaFromEta( const double eta ) {
   throw std::runtime_error("ThetaFromEta called with NaN or Inf");
   return -1;
 }
-
-// -------------------------------------------------------------------
-double EtaFromTheta( const double theta ) {
-  // The default value of -19 is used in the main eRHIC code,
-  // so use that for consistency.
-  double eta = -19.;
-  if (theta > 0. && theta < TMath::Pi() && !std::isnan(theta) && !std::isinf(theta)) {
-    eta = -log(tan(theta / 2.));
-  }
-  return eta;
-}
-// -------------------------------------------------------------------
-
