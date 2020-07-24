@@ -162,6 +162,14 @@ will read a (provided) e+D BeAGLE file.
 is a customizable particle gun that creates a few simple histograms
 and plots to see and test the acceptance dependence of smearing.
 
+And of course, you can now use all detector scripts from the ROOT interface with
+one line as well.
+```
+root [] gSystem->Load("libeicsmear")
+root [] gSystem->Load("libeicsmeardetectors")
+root [] SmearTree(BuildByName["MATRIX"](),"ep_hiQ2.20x250.small.root")
+```
+
 #### A canonic example ####
 
 When tests are built, a particularly useful example is```qaplots```.
