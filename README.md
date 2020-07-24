@@ -4,7 +4,7 @@ Collection of smearing scripts for eic-smear.
 Legend:
 * **Name:** Short descriptor. In general, the corresponding script will start with `Smear` and the detector creation function with `Build`, replacing spaces and periods in the optional version number with underscores. For example, "MatrixDetector 1.2" corresponds to ```SmearMatrixDetector_0_1.cxx```, which implements the function ```BuildMatrixDetector_0_1()```.
 * **Min. version:** Recommended or required minimal version of ```eic-smear```. This is usually the eic-smear version at the time the parameterization was added. It is recommended to always use the most current version though; on-going development and bug fixes mean that identical results cannot be guaranteed between different eic-smear versions.
-Future eic-smear versions will include an executable that displays the installed version number using
+Recent eic-smear versions (since 1.1.0) include an executable that displays the installed version number using
 ```
 eic-smear -v
 ```
@@ -168,6 +168,22 @@ one line as well.
 root [] gSystem->Load("libeicsmear")
 root [] gSystem->Load("libeicsmeardetectors")
 root [] SmearTree(BuildByName["MATRIX"](),"ep_hiQ2.20x250.small.root")
+```
+
+A wrapper in eic-smear allows to start ROOT with the libraries loaded and displays
+version information as well as the library locations.
+```
+$ eic-smear
+Using eic-smear version: 1.0.4-fix1
+Using these eic-smear libraries :
+/Users/kkauder/software/lib/libeicsmear.dylib
+/Users/kkauder/software/lib/libeicsmeardetectors.dylib
+eic-smear [0]
+```
+
+It can also be used for simple one liners:
+```
+echo 'BuildTree ("ep_hiQ2.20x250.small.txt.gz");SmearTree(BuildMatrixDetector_0_1(),"ep_hiQ2.20x250.small.root")' | eic-smear
 ```
 
 #### A canonic example ####
