@@ -22,6 +22,6 @@
 #pragma link C++ function BuildePHENIX_0_0;
 
 #pragma link C++ class std::map< std::string, Smear::Detector (*)()>;
-#pragma link C++ global BuildyName;
+#pragma link C++ global BuildByName;
 
 #endif

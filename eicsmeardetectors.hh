@@ -20,18 +20,18 @@ Smear::Detector BuildePHENIX_0_0(bool multipleScattering=true);
 // For convenience.
 // Should be all upper case.
 // Use like this:
-// Smear::Detector detector = BuildyName["MATRIX"]();
+// Smear::Detector detector = BuildByName["MATRIX"]();
 // Or safer,
-// auto detfunc = BuildyName["MATRIX"];
+// auto detfunc = BuildByName["MATRIX"];
 // Smear::Detector detector;
 // if (detfunc) detector = detfunc();
 
 
 // You can transform a general string like this:
-// string detstring = "BeAsT";
+// string detstring = "MaTrIx";
 // for (auto & c: detstring) c = toupper(c);
 
-std::map< std::string, Smear::Detector (*)()> BuildyName = {
+std::map< std::string, Smear::Detector (*)()> BuildByName = {
   // -- Online, OFFICIAL, matrix from https://physdiv.jlab.org/DetectorMatrix
   { "MATRIXDETECTOR_0_1", BuildMatrixDetector_0_1 },
   { "MATRIXDETECTOR", BuildMatrixDetector_0_1 },

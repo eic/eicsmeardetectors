@@ -74,7 +74,7 @@ int main(int argc, char* argv[]){
        qapars.detstring=="EPHENIX_0_0" ){
     detector = BuildePHENIX_0_0( true );
   } else {
-    auto detfunc = BuildyName[qapars.detstring];
+    auto detfunc = BuildByName[qapars.detstring];
     if ( detfunc) detector = detfunc();
   }
 

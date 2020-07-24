@@ -200,7 +200,7 @@ int main() {
   // detstring = "Perfect";
   // detstring = "BeAST";
   // detstring = "JLEIC";
-  detstring = "ePhenix";
+  // detstring = "ePhenix";
   // detstring = "ZEUS";
   for (auto & c: detstring) c = toupper(c);
   
@@ -209,7 +209,7 @@ int main() {
        detstring=="EPHENIX_0_0" ){
     detector = BuildePHENIX_0_0( true );
   } else {
-    auto detfunc = BuildyName[detstring];
+    auto detfunc = BuildByName[detstring];
     if ( detfunc) detector = detfunc();
   }
 
