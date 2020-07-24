@@ -315,6 +315,8 @@ regarding calculation of smeared kinematic variables.
 * Recent changes make it a requirement to always have "location" information. In practice, this means:
   * provide exactly 0 or exactly three smeared momentum components. The others will then be automatically constructed. If phi or theta resolution is unknown, this can be of the form ```Smear::Device phi(Smear::kPhi,"0");```
   * In the case of no momentum smearing (i.e., only energy is smeared), angular smearers still need to be provided, now representing phi and theta as determined by the calorimeter.
-  * To support legacy smearing scripts, this behavior can be turned off via
-  ```Detector::SetLegacyMode(true);```
+  * To support legacy smearing scripts, this behavior can be turned off via ```Detector::SetLegacyMode(true);```
   Note that in this case Pt and Pz smearing will no longer work (as that was the status when the legacy scripts were created).
+
+### More Examples ###
+Additional usage examples can be found at https://github.com/eic/eicsmear-jetexample. They are meant to help in any analysis, not just jet-based ones.
