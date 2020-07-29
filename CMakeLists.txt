@@ -105,8 +105,10 @@ if(BUILD_TESTS)
   configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/simple_gen.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
   configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/ep_sartre.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
-  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/DIS_hepmc.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/NC_hepmc.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/dis_hepmc2.dat ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/dis_hepmc3.dat ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/nc_hepmc2.dat ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/nc_hepmc3.dat ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 endif()
 
