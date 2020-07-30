@@ -301,54 +301,54 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn = 100  ) {
   auto OM_minpz = 0.25 * beam_mom_nn;
   auto OM_maxpz = RP_minpz;
 
-  // // Assume uniform acceptance for 0.0<theta<2.0 mrad  
-  // Smear::Acceptance::Zone OMfullzone( 1e-7, 2e-3,
-  // 				      0, TMath::TwoPi(), // phi
-  // 				      0., TMath::Infinity(), // E
-  // 				      0., TMath::Infinity(), // p
-  // 				      0., TMath::Infinity(), // pt
-  // 				      OM_minpz, OM_maxpz // pz
-  // 				      );
+  // Assume uniform acceptance for 0.0<theta<2.0 mrad  
+  Smear::Acceptance::Zone OMfullzone( 1e-7, 2e-3,
+  				      0, TMath::TwoPi(), // phi
+  				      0., TMath::Infinity(), // E
+  				      0., TMath::Infinity(), // p
+  				      0., TMath::Infinity(), // pt
+  				      OM_minpz, OM_maxpz // pz
+  				      );
 
     
-  // Smear::Device OMfullP(Smear::kP, pformula);
-  // OMfullP.Accept.AddZone(OMfullzone);
-  // OMfullP.Accept.AddParticle(2212);
-  // det.AddDevice(OMfullP);
+  Smear::Device OMfullP(Smear::kP, pformula);
+  OMfullP.Accept.AddZone(OMfullzone);
+  OMfullP.Accept.AddParticle(2212);
+  det.AddDevice(OMfullP);
 
-  // Smear::Device OMfullPt(Smear::kPt, ptformula);
-  // OMfullPt.Accept.AddZone(OMfullzone);
-  // OMfullPt.Accept.AddParticle(2212);
-  // det.AddDevice(OMfullPt);
+  Smear::Device OMfullPt(Smear::kPt, ptformula);
+  OMfullPt.Accept.AddZone(OMfullzone);
+  OMfullPt.Accept.AddParticle(2212);
+  det.AddDevice(OMfullPt);
   
-  // Smear::Device OMfullphi(Smear::kPhi, "0");
-  // OMfullphi.Accept.AddZone(OMfullzone);
-  // OMfullphi.Accept.AddParticle(2212);
-  // det.AddDevice(OMfullphi);
+  Smear::Device OMfullphi(Smear::kPhi, "0");
+  OMfullphi.Accept.AddZone(OMfullzone);
+  OMfullphi.Accept.AddParticle(2212);
+  det.AddDevice(OMfullphi);
 
-  // // for 2.0<theta<5.0 mrad, only accepted for |phi|>1 radian
-  // Smear::Acceptance::Zone OMpartialzone( 2e-3, 5e-3,
-  // 					 1, TMath::TwoPi()-1, // phi
-  // 					 0., TMath::Infinity(), // E
-  // 					 0., TMath::Infinity(), // p
-  // 					 0., TMath::Infinity(), // pt
-  // 					 OM_minpz, OM_maxpz // pz
-  // 					 );
+  // for 2.0<theta<5.0 mrad, only accepted for |phi|>1 radian
+  Smear::Acceptance::Zone OMpartialzone( 2e-3, 5e-3,
+  					 1, TMath::TwoPi()-1, // phi
+  					 0., TMath::Infinity(), // E
+  					 0., TMath::Infinity(), // p
+  					 0., TMath::Infinity(), // pt
+  					 OM_minpz, OM_maxpz // pz
+  					 );
 
-  // Smear::Device OMpartialP(Smear::kP, pformula);
-  // OMpartialP.Accept.AddZone(OMpartialzone);
-  // OMpartialP.Accept.AddParticle(2212);
-  // det.AddDevice(OMpartialP);
+  Smear::Device OMpartialP(Smear::kP, pformula);
+  OMpartialP.Accept.AddZone(OMpartialzone);
+  OMpartialP.Accept.AddParticle(2212);
+  det.AddDevice(OMpartialP);
 
-  // Smear::Device OMpartialPt(Smear::kPt, ptformula);
-  // OMpartialPt.Accept.AddZone(OMpartialzone);
-  // OMpartialPt.Accept.AddParticle(2212);
-  // det.AddDevice(OMpartialPt);
+  Smear::Device OMpartialPt(Smear::kPt, ptformula);
+  OMpartialPt.Accept.AddZone(OMpartialzone);
+  OMpartialPt.Accept.AddParticle(2212);
+  det.AddDevice(OMpartialPt);
   
-  // Smear::Device OMpartialphi(Smear::kPhi, "0");
-  // OMpartialphi.Accept.AddZone(OMpartialzone);
-  // OMpartialphi.Accept.AddParticle(2212);
-  // det.AddDevice(OMpartialphi);
+  Smear::Device OMpartialphi(Smear::kPhi, "0");
+  OMpartialphi.Accept.AddZone(OMpartialzone);
+  OMpartialphi.Accept.AddParticle(2212);
+  det.AddDevice(OMpartialphi);
   
   // Not covered:
   // Tracker material budget X/X0 <~5%
