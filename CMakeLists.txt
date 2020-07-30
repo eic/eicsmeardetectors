@@ -57,7 +57,7 @@ if ( ${ROOT_VERSION} VERSION_LESS 6.20 )
   include("${ROOT_DIR}/modules/RootNewMacros.cmake")
   root_generate_dictionary( eicsmeardetectorsDict
     eicsmeardetectors.hh
-    OPTIONS -rml libeicsmeardetectors -rmf libeicsmeardetectors.rootmap
+    OPTIONS -rml libeicsmeardetectors -rmf libeicsmeardetectorsDict.rootmap
     LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/cint/LinkDef.h
     )
 else()
@@ -136,7 +136,7 @@ INSTALL(FILES ${CMAKE_SOURCE_DIR}/eicsmeardetectors.hh
   )
 
 INSTALL(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/libeicsmeardetectors.rootmap
+  ${CMAKE_CURRENT_BINARY_DIR}/libeicsmeardetectorsDict.rootmap
   ${CMAKE_CURRENT_BINARY_DIR}/libeicsmeardetectorsDict_rdict.pcm
   DESTINATION lib
   )
