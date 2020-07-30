@@ -52,13 +52,15 @@ target_compile_options(eicsmeardetectors PRIVATE -Wall -g)
 ##############################################################################################################
 # Generate CINT dictionary.
 
+set(DICTOPTIONS "")
 if ( ${ROOT_VERSION} VERSION_LESS 6.20 )  
   include("${ROOT_DIR}/modules/RootNewMacros.cmake")
+  set(DICTOPTIONS "-rml libeicsmeardetectors -rmf libeicsmeardetectors.rootmap")
 endif()
 
 root_generate_dictionary( eicsmeardetectorsDict
   eicsmeardetectors.hh
-  OPTIONS -rml libeicsmeardetectors -rmf libeicsmeardetectors.rootmap
+  OPTIONS $DICTOPTIONS
   LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/cint/LinkDef.h
   )
 
