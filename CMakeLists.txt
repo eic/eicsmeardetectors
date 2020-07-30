@@ -52,8 +52,10 @@ target_compile_options(eicsmeardetectors PRIVATE -Wall -g)
 ##############################################################################################################
 # Generate CINT dictionary.
 
-## include is needed for ROOT <6.20
-include("${ROOT_DIR}/modules/RootNewMacros.cmake")
+if ( ${ROOT_VERSION} VERSION_LESS 6.20 )  
+  include("${ROOT_DIR}/modules/RootNewMacros.cmake")
+endif()
+
 root_generate_dictionary( eicsmeardetectorsDict
   eicsmeardetectors.hh
   OPTIONS -rml libeicsmeardetectors -rmf libeicsmeardetectors.rootmap
