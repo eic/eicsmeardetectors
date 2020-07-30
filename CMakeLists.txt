@@ -52,13 +52,21 @@ target_compile_options(eicsmeardetectors PRIVATE -Wall -g)
 ##############################################################################################################
 # Generate CINT dictionary.
 
-## include is needed for ROOT <6.20
-include("${ROOT_DIR}/modules/RootNewMacros.cmake")
-root_generate_dictionary( eicsmeardetectorsDict
-  eicsmeardetectors.hh
-  OPTIONS -rml libeicsmeardetectors -rmf libeicsmeardetectors.rootmap
-  LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/cint/LinkDef.h
-  )
+set(DICTOPTIONS "")
+if ( ${ROOT_VERSION} VERSION_LESS 6.20 )  
+  include("${ROOT_DIR}/modules/RootNewMacros.cmake")
+  root_generate_dictionary( eicsmeardetectorsDict
+    eicsmeardetectors.hh
+    OPTIONS -rml libeicsmeardetectors -rmf libeicsmeardetectorsDict.rootmap
+    LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/cint/LinkDef.h
+    )
+else()
+  root_generate_dictionary( eicsmeardetectorsDict
+    eicsmeardetectors.hh
+    LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/cint/LinkDef.h
+    )
+endif()
+
 
 ##############################################################################################################
 
@@ -105,8 +113,10 @@ if(BUILD_TESTS)
   configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/simple_gen.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
   configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/ep_sartre.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
-  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/DIS_hepmc.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/NC_hepmc.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/dis_hepmc2.dat ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/dis_hepmc3.dat ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/nc_hepmc2.dat ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+  configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/tests/nc_hepmc3.dat ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 endif()
 
@@ -126,7 +136,7 @@ INSTALL(FILES ${CMAKE_SOURCE_DIR}/eicsmeardetectors.hh
   )
 
 INSTALL(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/libeicsmeardetectors.rootmap
+  ${CMAKE_CURRENT_BINARY_DIR}/libeicsmeardetectorsDict.rootmap
   ${CMAKE_CURRENT_BINARY_DIR}/libeicsmeardetectorsDict_rdict.pcm
   DESTINATION lib
   )
