@@ -73,6 +73,10 @@ int main(int argc, char* argv[]){
   if ( qapars.detstring=="EPHENIX" ||
        qapars.detstring=="EPHENIX_0_0" ){
     detector = BuildePHENIX_0_0( true );
+  } else if ( qapars.detstring=="MATRIXFF" ||
+	      qapars.detstring=="MATRIXFF_0_1" ){
+    const int beam_mom_nn=100;
+    detector = BuildMatrixDetector_0_1_FF( beam_mom_nn );
   } else {
     auto detfunc = BuildByName[qapars.detstring];
     if ( detfunc) detector = detfunc();
