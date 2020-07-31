@@ -305,7 +305,7 @@ qaparameters ParseArguments ( int argc, char* argv[] ){
 	 << " [-o OutFileBase] (extension will be added)"  << endl
       	 << " [-N Nevents] (<0 for all)" << endl
       	 << " [-addpid pid] (can be called multiple times)" << endl
-	 << " [-det detstring] handbook, perfect, beast, ephenix, zeus, jleic (capitalization does not matter.)" << endl
+	 << " [-det detstring] matrix, handbook, perfect, beast, ephenix, zeus, jleic (capitalization does not matter.)" << endl
 	 << endl;
     throw std::runtime_error("Not a valid list of options");
   }
