@@ -204,14 +204,7 @@ int main() {
   // detstring = "ZEUS";
   for (auto & c: detstring) c = toupper(c);
   
-  Smear::Detector detector;
-  if ( detstring=="EPHENIX" ||
-       detstring=="EPHENIX_0_0" ){
-    detector = BuildePHENIX_0_0( true );
-  } else {
-    auto detfunc = BuildByName[detstring];
-    if ( detfunc) detector = detfunc();
-  }
+  Smear::Detector detector = Smear::BuildByName(detstring);
 
   if ( detector.GetNDevices() == 0 ) {
     std::cerr << "Detector sepcified as " << detstring

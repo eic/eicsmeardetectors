@@ -62,33 +62,27 @@ int main(int argc, char* argv[]){
 
   // Set up output name
   TString rootname = getrootname(qapars);
-  
-  // First, convert txt file to tree
-  // -------------------------------
-  BuildTree(qapars.txtfilename.c_str(), qapars.outpath.c_str(), qapars.nevents);
 
-  // Smear the tree
-  // --------------
-  Smear::Detector detector;
-  if ( qapars.detstring=="EPHENIX" ||
-       qapars.detstring=="EPHENIX_0_0" ){
-    detector = BuildePHENIX_0_0( true );
-  } else {
-    auto detfunc = BuildByName[qapars.detstring];
-    if ( detfunc) detector = detfunc();
-  }
-
-  if ( detector.GetNDevices() == 0 ) {
-    std::cerr << "Detector sepcified as " << qapars.detstring
-	      << " not recognized or empty." << std::endl;
-    return -1;
-  }
-
+  // First try to instantiate the detector 
+  // to avoid pointlessly transforming if that doesn't work
+  // ------------------------------------------------------
+  Smear::Detector detector = Smear::BuildByName(qapars.detstring);
   if ( detector.GetNDevices() == 0 ) {
     cerr << "Detector sepcified as " << qapars.detstring
 	 << " not recognized or empty." << endl;
     return -1;
   }
+  
+  // Convert input file to tree
+  // --------------------------
+  auto buildresult = BuildTree(qapars.txtfilename.c_str(), qapars.outpath.c_str(), qapars.nevents);
+  if ( buildresult !=0 ){
+    cerr << "Failed to build a tree from " << qapars.txtfilename << endl;
+    return buildresult;
+  }
+
+  // Smear the tree
+  // --------------
   TString smearedname = rootname;
   smearedname.ReplaceAll (".root",".smeared.root" );
   // Can disable warnings here.
@@ -544,6 +538,10 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
   TText t;
   t.SetNDC();
 
+  // Suppress obnoxious flood of
+  // "Current canvas added to pdf file"
+  gErrorIgnoreLevel = kWarning;
+
   // prep a pdf collection
   new TCanvas;
   gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf[" );
@@ -650,8 +648,6 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
     gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf" );
   }
 
-  
-
   // particle QA
   // -----------
   gStyle->SetStatX(0.55); // reposition stat box
@@ -690,6 +686,10 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
     coll.dPhi_p->ProfileX("_px",1,-1,"s")->Draw("same");
     gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf" );
   }
+
+  // return to standard warning level
+  gErrorIgnoreLevel = kInfo;
+
   // close the pdf collection
   gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf]" );
 }
