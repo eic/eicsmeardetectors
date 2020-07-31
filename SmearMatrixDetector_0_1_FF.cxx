@@ -24,7 +24,7 @@ static double ThetaFromEta( const double eta );
 /**
    beam_mom_nn: ion beam momentum per nucleon in GeV. Using int to avoid rounding issues in switch
 */
-Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn = 100  ) {
+Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   gSystem->Load("libeicsmear");
 
   // Create the detector object to hold all devices

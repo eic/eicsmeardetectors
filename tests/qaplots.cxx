@@ -62,30 +62,17 @@ int main(int argc, char* argv[]){
 
   // Set up output name
   TString rootname = getrootname(qapars);
-  
-  // First, convert txt file to tree
-  // -------------------------------
-  BuildTree(qapars.txtfilename.c_str(), qapars.outpath.c_str(), qapars.nevents);
 
-  // Smear the tree
-  // --------------
-  Smear::Detector detector;
-  if ( qapars.detstring=="EPHENIX" ||
-       qapars.detstring=="EPHENIX_0_0" ){
-    detector = BuildePHENIX_0_0( true );
-  } else if ( qapars.detstring=="MATRIXFF" ||
-	      qapars.detstring=="MATRIXFF_0_1" ){
-    const int beam_mom_nn=100;
-    detector = BuildMatrixDetector_0_1_FF( beam_mom_nn );
-  } else {
-    auto detfunc = BuildByName[qapars.detstring];
-    if ( detfunc) detector = detfunc();
-  }
 
-  if ( detector.GetNDevices() == 0 ) {
-    std::cerr << "Detector sepcified as " << qapars.detstring
-	      << " not recognized or empty." << std::endl;
-    return -1;
+  // First try to instantiate the detector 
+  // to avoid pointlessly transforming if that doesn't work
+  // ------------------------------------------------------
+  Smear::Detector detector = Smear::BuildByName(qapars.detstring);
+
+  // catch special cases
+  // Bit wasteful to first build the default version, but more readable
+  if ( TString(qapars.detstring).Contains("MATRIX") && TString(qapars.detstring).Contains("FF")){
+    detector = Smear::BuildByName(qapars.detstring, qapars.beam_mom_nn);
   }
 
   if ( detector.GetNDevices() == 0 ) {
@@ -93,6 +80,18 @@ int main(int argc, char* argv[]){
 	 << " not recognized or empty." << endl;
     return -1;
   }
+  
+
+  // Convert input file to tree
+  // --------------------------
+  auto buildresult = BuildTree(qapars.txtfilename.c_str(), qapars.outpath.c_str(), qapars.nevents);
+  if ( buildresult !=0 ){
+    cerr << "Failed to build a tree from " << qapars.txtfilename << endl;
+    return buildresult;
+  }
+
+  // Smear the tree
+  // --------------
   TString smearedname = rootname;
   smearedname.ReplaceAll (".root",".smeared.root" );
   // Can disable warnings here.
@@ -298,6 +297,11 @@ qaparameters ParseArguments ( int argc, char* argv[] ){
       } else if ( arg == "-det" ){
 	if (++parg == arguments.end() ){ argsokay=false; break; }
 	qapars.detstring=*parg;
+	for (auto & c: qapars.detstring) c = toupper(c);
+	if ( TString(qapars.detstring).Contains("MATRIX") && TString(qapars.detstring).Contains("FF")){
+	  if (++parg == arguments.end() ){ argsokay=false; break; }
+	  qapars.beam_mom_nn = std::stoi(parg->data());
+	}
       } else {
 	argsokay=false;
 	break;
@@ -315,12 +319,12 @@ qaparameters ParseArguments ( int argc, char* argv[] ){
 	 << " [-o OutFileBase] (extension will be added)"  << endl
       	 << " [-N Nevents] (<0 for all)" << endl
       	 << " [-addpid pid] (can be called multiple times)" << endl
-	 << " [-det detstring] handbook, perfect, beast, ephenix, zeus, jleic (capitalization does not matter.)" << endl
+	 << " [-det detstring] matrix, matrixff [beam_mom_nn], handbook, perfect, beast, ephenix, zeus, jleic (capitalization does not matter.)" << endl
 	 << endl;
     throw std::runtime_error("Not a valid list of options");
   }
   for (auto & c: qapars.detstring) c = toupper(c);
-  
+
   return qapars;
 }
 
@@ -548,6 +552,10 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
   TText t;
   t.SetNDC();
 
+  // Suppress obnoxious flood of
+  // "Current canvas added to pdf file"
+  gErrorIgnoreLevel = kWarning;
+
   // prep a pdf collection
   new TCanvas;
   gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf[" );
@@ -654,8 +662,6 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
     gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf" );
   }
 
-  
-
   // particle QA
   // -----------
   gStyle->SetStatX(0.55); // reposition stat box
@@ -694,6 +700,10 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
     coll.dPhi_p->ProfileX("_px",1,-1,"s")->Draw("same");
     gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf" );
   }
+
+  // return to standard warning level
+  gErrorIgnoreLevel = kInfo;
+
   // close the pdf collection
   gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf]" );
 }

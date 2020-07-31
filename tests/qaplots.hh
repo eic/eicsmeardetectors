@@ -19,6 +19,10 @@ struct qaparameters{
   std::string detstring = "MATRIX_0_1"; // Capitalization does not matter
 
   long usedevents=-1;// pure convenience so I can access the true number when nevents=-1;
+
+  // ion beam momentum per nucleon in GeV for far forward detectors.
+  // Using int to avoid rounding issues in switch
+  int beam_mom_nn; 
 };
 
 struct eventqacollection {

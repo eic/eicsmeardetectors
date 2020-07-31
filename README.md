@@ -22,6 +22,14 @@ These are recommended for Yellow Report work. This collection will grow as the d
 |HandBook 1.2| 1.0.4 | Based on [HANDBOOK v1.2 (Feb 20, 2020)](http://www.eicug.org/web/content/detector-rd) with adaptations where information was incomplete or missing. The MatrixDetector should be considered as the official version. |
 |PerfectDetector| 1.0.4 | Perfect detection and PID in \|&eta;\| < 15 |
 
+
+#### WG additions ####
+These are derived from an official detector, customized or extended for specific working group needs.
+|Name| min. version | Details and Comments |
+| --- | --- | --- |
+|MatrixDetector 0.1 with Far Forward detectors | 1.1.0 | Based on the Detector Matrix from June 16 2020 with additional ZDC, B0, and Roman Pots, as found in the [Detector Forward-IR Wiki](https://wiki.bnl.gov/eicug/index.php/Yellow_Report_Detector_Forward-IR). These are ROUGH approximations only!|
+
+
 #### Unofficial parameterizations ####
 This is a collection of existing parameterizations in various states. They can serve as placeholders and examples until fresh parameterizations are created, approved, and added to the official list.
 
