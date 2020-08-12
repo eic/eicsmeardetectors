@@ -66,7 +66,7 @@ int main(int argc, char* argv[]){
   // First try to instantiate the detector 
   // to avoid pointlessly transforming if that doesn't work
   // ------------------------------------------------------
-  Smear::Detector detector = Smear::BuildByName(qapars.detstring);
+  Smear::Detector detector = BuildByName(qapars.detstring);
   if ( detector.GetNDevices() == 0 ) {
     cerr << "Detector sepcified as " << qapars.detstring
 	 << " not recognized or empty." << endl;

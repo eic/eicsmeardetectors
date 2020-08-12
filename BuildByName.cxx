@@ -1,6 +1,6 @@
 #include "eicsmeardetectors.hh"
 
-Smear::Detector Smear::BuildByName (std::string dname){
+Smear::Detector BuildByName (std::string dname){
   // transform to upper case
   for (auto & c: dname) c = toupper(static_cast<unsigned char>(c));
   
@@ -52,7 +52,7 @@ Smear::Detector Smear::BuildByName (std::string dname){
 /** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
     for detectors with a bool parameter
 */
-Smear::Detector Smear::BuildByName ( std::string dname, const bool b){
+Smear::Detector BuildByName ( std::string dname, const bool b){
   // transform to upper case
   for (auto & c: dname) c = toupper(static_cast<unsigned char>(c));
   

@@ -19,27 +19,29 @@ Smear::Detector BuildeSTAR_0_0();
 Smear::Detector BuildePHENIX_0_0(bool multipleScattering=true);
 
 
-namespace Smear{
-  /** For convenience.
-      Not case-sensitive.Should be all upper case.
-      Use like this:
-      Smear::Detector detector = BuildByName("MATRIX");
+/** For convenience.
+    Not case-sensitive.Should be all upper case.
+    Use like this:
+    Smear::Detector detector = BuildByName("MATRIX");
+    
+    Provides multiple aliases
+*/
+// We could probably pull some tricks with variadic arguments,
+// https://en.cppreference.com/w/cpp/utility/variadic
+// But it's probably safer and more readable to
+// overload below for scripts that need parameters
+// Note that if you allow a default parameter, the detector needs
+// to appear here here as well
+// Notes:
+// - If we put it in the Smear namespace, for some reason it doesn't get picked up by the autoloader
+// - Tab completion for plain functions isn't supported by root (modules are the future, but that doesn't help)
 
-      Provides multiple aliases
-  */
-  // We could probably pull some tricks with variadic arguments,
-  // https://en.cppreference.com/w/cpp/utility/variadic
-  // But it's probably safer and more readable to
-  // overload below for scripts that need parameters
-  // Note that if you allow a default parameter, the detector needs
-  // to appear here here as well
-  Smear::Detector BuildByName (std::string dname);
-  
-  /** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
-      for detectors with a bool parameter
-  */
-  Smear::Detector BuildByName ( std::string dname, const bool b);
-}
+Smear::Detector BuildByName (std::string dname);
+
+/** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
+    for detectors with a bool parameter
+*/
+Smear::Detector BuildByName ( std::string dname, const bool b);
 
 
 #endif //EICSMEARDETECTORS_HH

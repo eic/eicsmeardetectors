@@ -204,7 +204,7 @@ int main() {
   // detstring = "ZEUS";
   for (auto & c: detstring) c = toupper(c);
   
-  Smear::Detector detector = Smear::BuildByName(detstring);
+  Smear::Detector detector = BuildByName(detstring);
 
   if ( detector.GetNDevices() == 0 ) {
     std::cerr << "Detector sepcified as " << detstring
