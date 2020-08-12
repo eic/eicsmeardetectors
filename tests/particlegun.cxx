@@ -204,7 +204,13 @@ int main() {
   // detstring = "ZEUS";
   for (auto & c: detstring) c = toupper(c);
   
-  Smear::Detector detector = BuildByName(detstring);
+  Smear::Detector detector;
+  if ( TString(detstring).Contains("MATRIX") && TString(detstring).Contains("FF")){
+    const int beam_mom_nn=100;
+    detector = BuildByName(detstring, beam_mom_nn);
+  } else {
+    detector = BuildByName(detstring);
+  }
 
   if ( detector.GetNDevices() == 0 ) {
     std::cerr << "Detector sepcified as " << detstring

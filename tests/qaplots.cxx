@@ -66,13 +66,17 @@ int main(int argc, char* argv[]){
   // First try to instantiate the detector 
   // to avoid pointlessly transforming if that doesn't work
   // ------------------------------------------------------
-  Smear::Detector detector = BuildByName(qapars.detstring);
+  Smear::Detector detector;
+  if ( qapars.beam_mom_nn < 0 ) detector = BuildByName(qapars.detstring);
+  else                          detector = BuildByName(qapars.detstring, qapars.beam_mom_nn);
+  
   if ( detector.GetNDevices() == 0 ) {
     cerr << "Detector sepcified as " << qapars.detstring
 	 << " not recognized or empty." << endl;
     return -1;
   }
   
+
   // Convert input file to tree
   // --------------------------
   auto buildresult = BuildTree(qapars.txtfilename.c_str(), qapars.outpath.c_str(), qapars.nevents);
@@ -288,6 +292,11 @@ qaparameters ParseArguments ( int argc, char* argv[] ){
       } else if ( arg == "-det" ){
 	if (++parg == arguments.end() ){ argsokay=false; break; }
 	qapars.detstring=*parg;
+	for (auto & c: qapars.detstring) c = toupper(c);
+	if ( TString(qapars.detstring).Contains("MATRIX") && TString(qapars.detstring).Contains("FF")){
+	  if (++parg == arguments.end() ){ argsokay=false; break; }
+	  qapars.beam_mom_nn = std::stoi(parg->data());
+	}
       } else {
 	argsokay=false;
 	break;
@@ -305,12 +314,12 @@ qaparameters ParseArguments ( int argc, char* argv[] ){
 	 << " [-o OutFileBase] (extension will be added)"  << endl
       	 << " [-N Nevents] (<0 for all)" << endl
       	 << " [-addpid pid] (can be called multiple times)" << endl
-	 << " [-det detstring] matrix, handbook, perfect, beast, ephenix, zeus, jleic (capitalization does not matter.)" << endl
+	 << " [-det detstring] matrix, matrixff [beam_mom_nn], handbook, perfect, beast, ephenix, zeus, jleic (capitalization does not matter.)" << endl
 	 << endl;
     throw std::runtime_error("Not a valid list of options");
   }
   for (auto & c: qapars.detstring) c = toupper(c);
-  
+
   return qapars;
 }
 

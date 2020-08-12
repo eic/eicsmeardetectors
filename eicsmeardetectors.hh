@@ -8,6 +8,7 @@
 #include "eicsmear/smear/Detector.h"
 
 Smear::Detector BuildMatrixDetector_0_1();
+Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn=275 );
 Smear::Detector BuildHandBook_1_2();
 Smear::Detector BuildPerfectDetector();
 Smear::Detector BuildJLEIC_0_1();
@@ -17,7 +18,6 @@ Smear::Detector BuildSTAR_0_0();
 Smear::Detector BuildZEUS_0_0();
 Smear::Detector BuildeSTAR_0_0();
 Smear::Detector BuildePHENIX_0_0(bool multipleScattering=true);
-
 
 /** For convenience.
     Not case-sensitive.Should be all upper case.
@@ -44,4 +44,9 @@ Smear::Detector BuildByName (std::string dname);
 Smear::Detector BuildByName ( std::string dname, const bool b);
 
 
+/** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
+    for detectors with an int parameter
+*/
+Smear::Detector BuildByName ( std::string dname, const int i);
+  
 #endif //EICSMEARDETECTORS_HH

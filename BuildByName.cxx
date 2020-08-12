@@ -65,3 +65,20 @@ Smear::Detector BuildByName ( std::string dname, const bool b){
   return Smear::Detector();
 };
 
+Smear::Detector BuildByName ( std::string dname, const int i){
+  // transform to upper case
+  for (auto & c: dname) c = toupper(static_cast<unsigned char>(c));
+  
+  // -- UNOFFICIAL addition of far forward detectors to the matrix
+  if ( dname == "MATRIXDETECTOR_0_1_FF"  ||
+       dname == "MATRIX_0_1_FF" ||
+       dname == "MATRIXFF" ) return BuildMatrixDetector_0_1_FF( i ); // i is beam_mom_nn
+  
+  std::cerr << "Detector sepcified as " << dname
+	    << " not recognized or empty." << std::endl;
+  throw;
+  return Smear::Detector();
+};
+
+
+
