@@ -82,11 +82,6 @@ root [] erhic::DisKinematics::BoundaryWarning=false;
 root [] SmearTree(BuildMatrixDetector_0_1(),"ep_hiQ2.20x250.small.root", "smeared.root",-1)
 ```
 but such warnings can serve as canaries in a coal mine while experimenting with a smearing script or an MC generator, especially if "nan" or "inf" values are produced, and are therefore turned on by default.
-* The combined header ```eicsmeardetectors.hh``` is only _needed_ for compilation but it contains a useful helper allowing quick selection of a detector by name via:
-```
-#include "eicsmeardetectors.hh"
-Smear::Detector detector= BuildByName["MATRIX"]();
-```
 
 ##### Analyze the Tree #####
 
@@ -167,7 +162,7 @@ one line as well.
 ```
 root [] gSystem->Load("libeicsmear")
 root [] gSystem->Load("libeicsmeardetectors")
-root [] SmearTree(BuildByName["MATRIX"](),"ep_hiQ2.20x250.small.root")
+root [] SmearTree(BuildByName("MATRIX"),"ep_hiQ2.20x250.small.root")
 ```
 
 A wrapper in eic-smear allows to start ROOT with the libraries loaded and displays
@@ -178,12 +173,12 @@ Using eic-smear version: 1.1.0-rc1
 Using these eic-smear libraries :
 /Users/kkauder/software/lib/libeicsmear.dylib
 /Users/kkauder/software/lib/libeicsmeardetectors.dylib
-eic-smear [0]
+eic-smear [0] SmearTree(BuildByName("MATRIX"),"ep_hiQ2.20x250.small.root")
 ```
 
 It can also be used for simple one liners:
 ```
-echo 'BuildTree ("ep_hiQ2.20x250.small.txt.gz");SmearTree(BuildMatrixDetector_0_1(),"ep_hiQ2.20x250.small.root")' | eic-smear
+echo 'BuildTree ("ep_hiQ2.20x250.small.txt.gz");SmearTree(BuildByName("MATRIX"),"ep_hiQ2.20x250.small.root")' | eic-smear
 ```
 
 #### A canonic example ####
