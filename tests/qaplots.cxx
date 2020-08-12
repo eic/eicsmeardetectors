@@ -63,18 +63,13 @@ int main(int argc, char* argv[]){
   // Set up output name
   TString rootname = getrootname(qapars);
 
-
   // First try to instantiate the detector 
   // to avoid pointlessly transforming if that doesn't work
   // ------------------------------------------------------
-  Smear::Detector detector = Smear::BuildByName(qapars.detstring);
-
-  // catch special cases
-  // Bit wasteful to first build the default version, but more readable
-  if ( TString(qapars.detstring).Contains("MATRIX") && TString(qapars.detstring).Contains("FF")){
-    detector = Smear::BuildByName(qapars.detstring, qapars.beam_mom_nn);
-  }
-
+  Smear::Detector detector;
+  if ( qapars.beam_mom_nn < 0 ) detector = BuildByName(qapars.detstring);
+  else                          detector = BuildByName(qapars.detstring, qapars.beam_mom_nn);
+  
   if ( detector.GetNDevices() == 0 ) {
     cerr << "Detector sepcified as " << qapars.detstring
 	 << " not recognized or empty." << endl;

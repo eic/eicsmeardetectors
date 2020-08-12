@@ -22,7 +22,7 @@ struct qaparameters{
 
   // ion beam momentum per nucleon in GeV for far forward detectors.
   // Using int to avoid rounding issues in switch
-  int beam_mom_nn; 
+  int beam_mom_nn=-1; 
 };
 
 struct eventqacollection {
