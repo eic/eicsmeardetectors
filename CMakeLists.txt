@@ -30,6 +30,7 @@ add_library(
    SmearZEUS_0_0.cxx
    SmearePHENIX_0_0.cxx
    SmeareSTAR_0_0.cxx
+   BuildByName.cxx
    )
 
 # include directories
@@ -52,12 +53,11 @@ target_compile_options(eicsmeardetectors PRIVATE -Wall -g)
 ##############################################################################################################
 # Generate CINT dictionary.
 
-set(DICTOPTIONS "")
 if ( ${ROOT_VERSION} VERSION_LESS 6.20 )  
   include("${ROOT_DIR}/modules/RootNewMacros.cmake")
   root_generate_dictionary( eicsmeardetectorsDict
     eicsmeardetectors.hh
-    OPTIONS -rml libeicsmeardetectors -rmf libeicsmeardetectorsDict.rootmap
+    OPTIONS -rml libeicsmeardetectorsDict -rmf libeicsmeardetectorsDict.rootmap
     LINKDEF ${CMAKE_CURRENT_SOURCE_DIR}/cint/LinkDef.h
     )
 else()
