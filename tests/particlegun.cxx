@@ -202,6 +202,7 @@ int main() {
   // detstring = "JLEIC";
   // detstring = "ePhenix";
   // detstring = "ZEUS";
+  detstring = "TOF";
   for (auto & c: detstring) c = toupper(c);
   
   Smear::Detector detector;
