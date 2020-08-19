@@ -16,7 +16,11 @@ Smear::Detector BuildByName (std::string dname){
   // -- Perfect detection and PID in |eta|<15
   if ( dname == "PERFECTDETECTOR" ||
        dname == "PERFECT" ) return BuildPerfectDetector();
-  
+
+  // EXPERIMENTAL
+  if ( dname == "TOF" ) return BuildWithTof();
+  if ( dname == "MATRIXTOF" ) return BuildMatrixDetector_0_1_TOF();
+
   // -- Inofficial detector scripts
   // ---- BeAST
   if ( dname == "BEAST_0_1" ||

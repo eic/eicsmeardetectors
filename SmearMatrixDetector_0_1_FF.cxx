@@ -161,10 +161,14 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   EmcalFwd.Accept.SetGenre(Smear::kElectromagnetic);
   det.AddDevice(EmcalFwd);
 
+  // TODO: Add PID
   // Could turn on perfect PID
-  // Smear::Acceptance::Zone acceptall(etaToTheta(15.),etaToTheta(-15.));
+  // Make sure to not cover more than is covered by the other detectors.
+  // Using the smallest region here, but we could add a second one for
+  // the extended EmCal range
+  // Smear::Acceptance::Zone acceptpid(ThetaFromEta(3.5),ThetaFromEta(-3.5));
   // Smear::PerfectID pid;
-  // pid.Accept.AddZone(acceptall);
+  // pid.Accept.AddZone(acceptpid);
   // det.AddDevice( pid );
 
   // Hadronic  Calorimeters

@@ -32,6 +32,9 @@ add_library(
    SmearePHENIX_0_0.cxx
    SmeareSTAR_0_0.cxx
    BuildByName.cxx
+   SmearWithTof.cxx
+   SmearMatrixDetector_0_1_TOF.cxx
+   piddetectors/tofBarrel.C
    )
 
 # include directories

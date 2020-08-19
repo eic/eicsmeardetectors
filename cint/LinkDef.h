@@ -21,6 +21,8 @@
 #pragma link C++ function BuildeSTAR_0_0;
 #pragma link C++ function BuildSTAR_0_0;
 #pragma link C++ function BuildePHENIX_0_0;
+#pragma link C++ function BuildWithTof;
+#pragma link C++ function BuildMatrixDetector_TOF;
  
 #pragma link C++ function BuildByName;
 
