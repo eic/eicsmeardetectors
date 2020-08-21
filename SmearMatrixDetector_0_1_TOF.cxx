@@ -2,7 +2,23 @@
 // https://physdiv.jlab.org/DetectorMatrix/
 // From June 16 2020
 
-// Here added devices for the far forward region on request by the WG
+// W.r.t. to the [Detector Requirements and R&D Handbook](http://www.eicug.org/web/sites/default/files/EIC_HANDBOOK_v1.2.pdf) there have been three changes.
+
+// For the Backward Detector the Tracking Resolution column was updated as follows:
+// eta=-3.5 - -2.5: sigma_p/p ~ 0.1%×p+2.0%   ->   sigma_p/p ~ 0.1%×p &oplus;  0.5%
+// eta=-2.5 - -2.0: sigma_p/p ~ 0.1%×p+1.0%   ->   sigma_p/p ~ 0.1%×p &oplus;  0.5%
+// eta=-2.0 - -1.0: sigma_p/p ~ 0.1%×p+1.0%   ->   sigma_p/p ~ 0.05%×p &oplus;  0.5%
+// The abstract, reference files, and note sections of these fields have been updated accordingly.
+
+// Important Notes:
+// - The implementation of the original handbook matrix in SmearHandBook_1_2.cxx
+//   took some liberties and added constant terms and other specifications where
+//   they were/are missing in the matrix.
+//   The implementation here explicitly does not do so, and aims to be completely faithful
+//   to the configuration available online.
+// - Where ranges are given, the more conservative number is chosen.
+// - Without available specifications, angular resolution is assumed to be perfect.
+// -
 
 #include "eicsmear/erhic/VirtualParticle.h"
 #include "eicsmear/smear/Acceptance.h"
@@ -13,19 +29,13 @@
 #include "eicsmear/smear/PerfectID.h"
 #include <eicsmear/smear/Smear.h>
 #include <eicsmear/erhic/ParticleMC.h>
+#include "piddetectors/TofBarrelSmearer.h"
 #include "Math/Vector4D.h"
-
-#include <string>
-using std::string;
 
 // declare static --> local to this file, won't clash with others
 static double ThetaFromEta( const double eta );
 
-/**
-   beam_mom_nn: ion beam momentum per nucleon in GeV. Using int to avoid rounding issues in switch
-*/
-
-Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
+Smear::Detector BuildMatrixDetector_0_1_TOF() {
   gSystem->Load("libeicsmear");
 
   // Create the detector object to hold all devices
@@ -132,7 +142,7 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   // ---------------
   // Note: Smear::kElectromagnetic == gamma + e. Does not include muons (good)
 
-  // Calorimeter resolution usually given as sigma_E/E = const% + stochastic%/Sqrt{E}
+  // Calorimeter resolution usually given as sigma_E/E = const% + stocastic%/Sqrt{E}
   // EIC Smear needs absolute sigma: sigma_E = Sqrt{const*const*E*E + stoc*stoc*E}
 
   // Back
@@ -207,171 +217,20 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   HcalFwd.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(HcalFwd);
 
-  // Far forward
-  // -----------
-  //   Neutrons:
-  // - Assume uniform acceptancefor 0<theta< 4.5 mrad
-  // - Assume an overall energy resolution sigmaE/E = 50% / sqrt (E) oplus 5%
-  // - Assume angular resolution of sigmaTheta = 3 mrad/rootE
-  // sigma_E/E = stochastic%/Sqrt{E} + const% 
-  // EIC Smear needs absolute sigma: sigma_E = Sqrt{const*const*E*E + stoc*stoc*E}
-  Smear::Acceptance::Zone ZDCzone( 1e-7, 4.5e-3 );
-  Smear::Device ZDC(Smear::kE, "sqrt(pow( 0.05*E, 2) + pow ( 0.5,2) *E)");
-  ZDC.Accept.AddZone(ZDCzone);
-  ZDC.Accept.SetCharge(Smear::kNeutral);
-  det.AddDevice(ZDC);
-  
-  Smear::Device ZDCtheta(Smear::kTheta, "3e-3 / sqrt(E)");
-  ZDCtheta.Accept.AddZone(ZDCzone);
-  ZDCtheta.Accept.SetCharge(Smear::kNeutral);
-  det.AddDevice(ZDCtheta);
-  
-  Smear::Device ZDCphi(Smear::kPhi, "0");
-  ZDCphi.Accept.AddZone(ZDCzone);
-  ZDCphi.Accept.SetCharge(Smear::kNeutral);
-  det.AddDevice(ZDCphi);
-
-  // Protons
-  // All detectors: Reasonable to assume sigma_p/p= 5% sigmaPt/Pt = 3%
-  std::string pformula  = "0.05*P";
-  std::string ptformula = "0.03*pT";
-
-  // Assume uniform acceptance for 6<theta <20 mrad – "B0 spectrometer"
-  // Note that anti-protons bend the other way
-  Smear::Acceptance::Zone B0zone( 6e-3, 20e-3 );
-  Smear::Device B0P(Smear::kP, pformula);
-  B0P.Accept.AddZone(B0zone);
-  B0P.Accept.AddParticle(2212);
-  det.AddDevice(B0P);
-
-  Smear::Device B0Pt(Smear::kPt, ptformula);
-  B0Pt.Accept.AddZone(B0zone);
-  B0Pt.Accept.AddParticle(2212);
-  det.AddDevice(B0Pt);
-  
-  Smear::Device B0phi(Smear::kPhi, "0");
-  B0phi.Accept.AddZone(B0zone);
-  B0phi.Accept.AddParticle(2212);
-  det.AddDevice(B0phi);
-
-  // For protons with p_z/(beam momentum / nucleus )>.6 – "Roman pots"
-  auto RP_minpz = 0.6 * beam_mom_nn;
-  // 275 GeV -or- 135 GeV/n deuterons: Assume uniform acceptance for .5<theta<5.0 mrad
-  // 100 GeV: Assume uniform acceptance for .2<theta<5.0 mrad
-  // 41 GeV: Assume uniform acceptance for 1.0<theta<4.5 mrad
-  //
-  // for protons from nuclear breakup, the TOTAL momentum of the beam must be specified
-  // so 41 GeV/n He-3 is 61 GeV total, and 41 GeV/n deuteron is 82 GeV total
-  float thetamin = 0;
-  float thetamax = 0; 
-  switch ( beam_mom_nn  ){ // switch needs an int. add a little to avoid rounding problems
-  case 275 : // e+P
-  case 135 : // e+D
-    thetamin = 0.5e-3;
-    thetamax = 5e-3;
-    break;
-  case 110 :
-  case 100 :
-    thetamin = 0.2e-3;
-    thetamax = 5e-3;
-    break;
-  case 41 :
-    thetamin = 1.0e-3;
-    thetamax = 4.5e-3;
-    break;
-  case 61 :   // 41 GeV/n He-3 beam setting
-  case 82 :   // 41 GeV/n deuteron beam setting
-  case 165 :  // 110 GeV/n He-3 beam setting
-  case 220 :  // 110 GeV/n deuteron beam setting
-    thetamin = 1.0e-6;
-    thetamax = 5.0e-3;
-	break;
-  default :
-    throw std::runtime_error ( "Unsupported beam momentum for far forward detectors");
-  }
-
-  Smear::Acceptance::Zone RPzone( thetamin, thetamax,
-				  0, TMath::TwoPi(), // phi
-				  0., TMath::Infinity(), // E
-				  0., TMath::Infinity(), // p
-				  0., TMath::Infinity(), // pt
-				  RP_minpz, TMath::Infinity() // pz
-				  );
-      
-  Smear::Device RPP(Smear::kP, pformula);
-  RPP.Accept.AddZone(RPzone);
-  RPP.Accept.AddParticle(2212);
-  det.AddDevice(RPP);
-
-  Smear::Device RPPt(Smear::kPt, ptformula);
-  RPPt.Accept.AddZone(RPzone);
-  RPPt.Accept.AddParticle(2212);
-  det.AddDevice(RPPt);
-  
-  Smear::Device RPphi(Smear::kPhi, "0");
-  RPphi.Accept.AddZone(RPzone);
-  RPphi.Accept.AddParticle(2212);
-  det.AddDevice(RPphi);
-
-  // For protons with .25<p_z/(beam momentum)<.6 – "Off-momentum Detectors"
-  auto OM_minpz = 0.25 * beam_mom_nn;
-  auto OM_maxpz = RP_minpz;
-
-  // Assume uniform acceptance for 0.0<theta<2.0 mrad  
-  Smear::Acceptance::Zone OMfullzone( 1e-7, 2e-3,
-  				      0, TMath::TwoPi(), // phi
-  				      0., TMath::Infinity(), // E
-  				      0., TMath::Infinity(), // p
-  				      0., TMath::Infinity(), // pt
-  				      OM_minpz, OM_maxpz // pz
-  				      );
-
-    
-  Smear::Device OMfullP(Smear::kP, pformula);
-  OMfullP.Accept.AddZone(OMfullzone);
-  OMfullP.Accept.AddParticle(2212);
-  det.AddDevice(OMfullP);
-
-  Smear::Device OMfullPt(Smear::kPt, ptformula);
-  OMfullPt.Accept.AddZone(OMfullzone);
-  OMfullPt.Accept.AddParticle(2212);
-  det.AddDevice(OMfullPt);
-  
-  Smear::Device OMfullphi(Smear::kPhi, "0");
-  OMfullphi.Accept.AddZone(OMfullzone);
-  OMfullphi.Accept.AddParticle(2212);
-  det.AddDevice(OMfullphi);
-
-  // for 2.0<theta<5.0 mrad, only accepted for |phi|>1 radian
-  Smear::Acceptance::Zone OMpartialzone( 2e-3, 5e-3,
-  					 1, TMath::TwoPi()-1, // phi
-  					 0., TMath::Infinity(), // E
-  					 0., TMath::Infinity(), // p
-  					 0., TMath::Infinity(), // pt
-  					 OM_minpz, OM_maxpz // pz
-  					 );
-
-  Smear::Device OMpartialP(Smear::kP, pformula);
-  OMpartialP.Accept.AddZone(OMpartialzone);
-  OMpartialP.Accept.AddParticle(2212);
-  det.AddDevice(OMpartialP);
-
-  Smear::Device OMpartialPt(Smear::kPt, ptformula);
-  OMpartialPt.Accept.AddZone(OMpartialzone);
-  OMpartialPt.Accept.AddParticle(2212);
-  det.AddDevice(OMpartialPt);
-  
-  Smear::Device OMpartialphi(Smear::kPhi, "0");
-  OMpartialphi.Accept.AddZone(OMpartialzone);
-  OMpartialphi.Accept.AddParticle(2212);
-  det.AddDevice(OMpartialphi);
-  
   // Not covered:
   // Tracker material budget X/X0 <~5%
   // Low-Q^2 tagger: -6.9<eta<-5.8: Delta_theta/theta < 1.5%; 10^-6 < Q2 < 10^-2 GeV2
+  // Proton spectrometer:  eta>6.2: sigma_intrinsic(|t|)/|t| < 1%; Acceptance: 0.2 < pT < 1.2 GeV/c
   // Barrel vertexing: sigma_xyz ~ 20 microns, d0(z) ~ d0(r phi) ~ (20 microns)/(pT [GeV])  + 5 microns
   // Central muon detection
 
+  Smear::TofBarrelSmearer tofBarrel(100, -1.0, 1.0, 10);
+  // Restricting to the tracker barrel defined above
+  // but additional cuts are done by the detector!
+  tofBarrel.Accept.AddZone( TrackBarrelZone ); 
+  tofBarrel.Accept.SetCharge(Smear::kCharged);
+  det.AddDevice(tofBarrel);
+  
   return det;
 }
 

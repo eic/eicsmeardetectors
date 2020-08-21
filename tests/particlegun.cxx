@@ -202,19 +202,15 @@ int main() {
   // detstring = "JLEIC";
   // detstring = "ePhenix";
   // detstring = "ZEUS";
+  detstring = "TOF";
   for (auto & c: detstring) c = toupper(c);
   
   Smear::Detector detector;
-  if ( detstring=="EPHENIX" ||
-       detstring=="EPHENIX_0_0" ){
-    detector = BuildePHENIX_0_0( true );
-  } else if ( detstring=="MATRIXFF" ||
-	      detstring=="MATRIXFF_0_1" ){
+  if ( TString(detstring).Contains("MATRIX") && TString(detstring).Contains("FF")){
     const int beam_mom_nn=100;
-    detector = BuildMatrixDetector_0_1_FF( beam_mom_nn );
+    detector = BuildByName(detstring, beam_mom_nn);
   } else {
-    auto detfunc = BuildByName[detstring];
-    if ( detfunc) detector = detfunc();
+    detector = BuildByName(detstring);
   }
 
   if ( detector.GetNDevices() == 0 ) {

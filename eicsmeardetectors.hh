@@ -1,13 +1,17 @@
 #ifndef EICSMEARDETECTORS_HH
 #define EICSMEARDETECTORS_HH
 
-#include <map>
 #include <string>
+#include <iostream>
+#include <cctype>
 
 #include "eicsmear/smear/Detector.h"
+// #include "eicsmear/smear/NumSigmaPid.h"
+// #include "piddetectors/TofBarrelSmearer.h"
+// #include "piddetectors/tofBarrel.h"
 
 Smear::Detector BuildMatrixDetector_0_1();
-Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn );
+Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn=100 );
 Smear::Detector BuildHandBook_1_2();
 Smear::Detector BuildPerfectDetector();
 Smear::Detector BuildJLEIC_0_1();
@@ -18,56 +22,39 @@ Smear::Detector BuildZEUS_0_0();
 Smear::Detector BuildeSTAR_0_0();
 Smear::Detector BuildePHENIX_0_0(bool multipleScattering=true);
 
-// For convenience.
-// Should be all upper case.
-// Use like this:
-// Smear::Detector detector = BuildByName["MATRIX"]();
-// Or safer,
-// auto detfunc = BuildByName["MATRIX"];
-// Smear::Detector detector;
-// if (detfunc) detector = detfunc();
+// experimental
+Smear::Detector BuildWithTof();
+Smear::Detector BuildMatrixDetector_0_1_TOF();
 
 
-// You can transform a general string like this:
-// string detstring = "MaTrIx";
-// for (auto & c: detstring) c = toupper(c);
+/** For convenience.
+    Not case-sensitive.Should be all upper case.
+    Use like this:
+    Smear::Detector detector = BuildByName("MATRIX");
+    
+    Provides multiple aliases
+*/
+// We could probably pull some tricks with variadic arguments,
+// https://en.cppreference.com/w/cpp/utility/variadic
+// But it's probably safer and more readable to
+// overload below for scripts that need parameters
+// Note that if you allow a default parameter, the detector needs
+// to appear here here as well
+// Notes:
+// - If we put it in the Smear namespace, for some reason it doesn't get picked up by the autoloader
+// - Tab completion for plain functions isn't supported by root (modules are the future, but that doesn't help)
 
-std::map< std::string, Smear::Detector (*)()> BuildByName = {
-  // -- Online, OFFICIAL, matrix from https://physdiv.jlab.org/DetectorMatrix
-  { "MATRIXDETECTOR_0_1", BuildMatrixDetector_0_1 },
-  { "MATRIXDETECTOR", BuildMatrixDetector_0_1 },
-  { "MATRIX_0_1", BuildMatrixDetector_0_1 },
-  { "MATRIX", BuildMatrixDetector_0_1 },
-  // -- Handbook matrix from http://www.eicug.org/web/sites/default/files/EIC_HANDBOOK_v1.2.pdf
-  { "HANDBOOK_1_2", BuildHandBook_1_2 },
-  { "HANDBOOK", BuildHandBook_1_2 },
-  // -- Perfect detection and PID in |eta|<15
-  { "PERFECTDETECTOR", BuildPerfectDetector },
-  { "PERFECT", BuildPerfectDetector },
-  // -- Inofficial detector scripts
-  // ---- BeAST
-  {"BEAST_0_1", BuildBeAST_0_1},
-  {"BEAST", BuildBeAST_0_1},
-  // ---- Jleic
-  {"JLEIC_0_1", BuildJLEIC_0_1},
-  {"JLEIC", BuildJLEIC_0_1},
-  // -- Older legacy detector scripts; may require adding
-  //    det.SetLegacyMode(true);
-  // ---- BeAST
-  {"BEAST_0_0", BuildBeAST_0_0},
-  {"BEAST", BuildBeAST_0_1},
-  // ---- ZEUS
-  {"ZEUS_0_0", BuildZEUS_0_0},
-  {"ZEUS", BuildZEUS_0_0},
-  // eSTAR
-  {"ESTAR_0_0", BuildeSTAR_0_0},
-  {"ESTAR", BuildeSTAR_0_0},
-  // STAR
-  {"STAR_0_0", BuildSTAR_0_0},
-  {"STAR", BuildSTAR_0_0}
-  // Note that BuildePHENIX(bool) has a different signature and can't be delivered the same way
-};
+Smear::Detector BuildByName (std::string dname);
+
+/** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
+    for detectors with a bool parameter
+*/
+Smear::Detector BuildByName ( std::string dname, const bool b);
 
 
+/** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
+    for detectors with an int parameter
+*/
+Smear::Detector BuildByName ( std::string dname, const int i);
+  
 #endif //EICSMEARDETECTORS_HH
-

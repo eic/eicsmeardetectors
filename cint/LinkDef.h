@@ -21,8 +21,9 @@
 #pragma link C++ function BuildeSTAR_0_0;
 #pragma link C++ function BuildSTAR_0_0;
 #pragma link C++ function BuildePHENIX_0_0;
-
-#pragma link C++ class std::map< std::string, Smear::Detector (*)()>;
-#pragma link C++ global BuildByName;
+#pragma link C++ function BuildWithTof;
+#pragma link C++ function BuildMatrixDetector_TOF;
+ 
+#pragma link C++ function BuildByName;
 
 #endif
