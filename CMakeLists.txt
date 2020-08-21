@@ -99,6 +99,13 @@ if(BUILD_TESTS)
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
     )
+  ## a version focused on additional far forward detectors
+  add_executable(ffqaplots tests/ffqaplots.cxx tests/ffqaplots.hh )
+  target_link_libraries(ffqaplots eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_include_directories(ffqaplots
+    PRIVATE
+    ${ROOT_INCLUDE_DIRS}
+    )
 
   ## simple tree builder
   add_executable(test_simple_buildtree tests/test_simple_buildtree.cxx)
