@@ -120,7 +120,7 @@ int main(int argc, char* argv[]){
   // pidqacollection is defined in the header
   map<int,pidqacollection> qabook;
   // By default, use the standard particles
-  if ( qapars.pids.size() == 0 ) qapars.pids = { 2212, 2112 }; // e, pi, K, p, n
+  if ( qapars.pids.size() == 0 ) qapars.pids = { 11, 211, 321, 2212, 2112 }; // e, pi, K, p, n
   initializepidqabook ( qapars, qabook );
     
   // -------------
@@ -260,7 +260,7 @@ void FillParticleQA( map<int,pidqacollection>& qabook, const Particle* const inP
       coll.dTh_p->Fill(inParticle->GetP(), inParticle->GetTheta() - inParticleS->GetTheta());
       coll.dEta_p->Fill(inParticle->GetP(), inParticle->GetEta() - inParticleS->GetEta());
       coll.dPhi_p->Fill(inParticle->GetP(), inParticle->GetPhi() - inParticleS->GetPhi());
-	  coll.Phi_theta->Fill(inParticle->GetTheta(), inParticle->GetPhi());
+      coll.Phi_theta->Fill(inParticle->GetTheta(), inParticle->GetPhi());
     }
   }
 }
@@ -392,7 +392,7 @@ void initializepidqabook(const qaparameters& qapars, map<int,pidqacollection>& q
   float detamax = 0.1;
   int detabins = 100;
 
-  float phimin = 0;//-TMath::Pi();
+  float phimin = 0;
   float phimax = TMath::TwoPi();
   int phibins = 64;
   
@@ -427,7 +427,7 @@ void initializepidqabook(const qaparameters& qapars, map<int,pidqacollection>& q
     s = qapars.detstring + "_dEta_p_"; s += pid;
     qabook[pid].dEta_p = new TH2D( s,s+";p;#Delta#eta", pbins, pmin, pmax, detabins, detamin, detamax );
 
-	s = qapars.detstring + "_phi_eta_"; s += pid;
+    s = qapars.detstring + "_phi_eta_"; s += pid;
     qabook[pid].Phi_theta = new TH2D( s,s+";#theta;#phi", thbins, thmin, thmax, phibins, phimin, phimax );
 
 
@@ -670,9 +670,6 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
 
     // option "s" in Profile shows rms
 
-	coll.Phi_theta->Draw("colz");
-    gPad->SaveAs(qapars.outfilebase + qapars.detstring + ".pdf");
-    
     coll.DelP_th->Draw("colz");
     gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf" );
 
@@ -701,6 +698,9 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
     coll.dPhi_p->Draw("colz");
     coll.dPhi_p->ProfileX("_px",1,-1,"s")->Draw("same");
     gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf" );
+
+    coll.Phi_theta->Draw("colz");
+    gPad->SaveAs(qapars.outfilebase + qapars.detstring + ".pdf");
   }
 
   // return to standard warning level
