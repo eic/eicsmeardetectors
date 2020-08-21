@@ -24,6 +24,7 @@ static double ThetaFromEta( const double eta );
 /**
    beam_mom_nn: ion beam momentum per nucleon in GeV. Using int to avoid rounding issues in switch
 */
+
 Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   gSystem->Load("libeicsmear");
 
@@ -214,20 +215,26 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   // - Assume angular resolution of sigmaTheta = 3 mrad/rootE
   // sigma_E/E = stochastic%/Sqrt{E} + const% 
   // EIC Smear needs absolute sigma: sigma_E = Sqrt{const*const*E*E + stoc*stoc*E}
+  // Note: In principle,   ZDC{|theta|phi}.Accept.SetCharge(Smear::kNeutral); is the more correct
+  // way - which would also accept K0L for example.
+  // Anticipating the actual needs of users, we're going to only accept neutrons and gammas for now
   Smear::Acceptance::Zone ZDCzone( 1e-7, 4.5e-3 );
   Smear::Device ZDC(Smear::kE, "sqrt(pow( 0.05*E, 2) + pow ( 0.5,2) *E)");
   ZDC.Accept.AddZone(ZDCzone);
-  ZDC.Accept.SetCharge(Smear::kNeutral);
+  ZDC.Accept.AddParticle(2112);
+  ZDC.Accept.AddParticle(22);
   det.AddDevice(ZDC);
   
   Smear::Device ZDCtheta(Smear::kTheta, "3e-3 / sqrt(E)");
   ZDCtheta.Accept.AddZone(ZDCzone);
-  ZDCtheta.Accept.SetCharge(Smear::kNeutral);
+  ZDCtheta.Accept.AddParticle(2112);
+  ZDCtheta.Accept.AddParticle(22);
   det.AddDevice(ZDCtheta);
   
   Smear::Device ZDCphi(Smear::kPhi, "0");
   ZDCphi.Accept.AddZone(ZDCzone);
-  ZDCphi.Accept.SetCharge(Smear::kNeutral);
+  ZDCphi.Accept.AddParticle(2112);
+  ZDCphi.Accept.AddParticle(22);
   det.AddDevice(ZDCphi);
 
   // Protons
@@ -258,6 +265,9 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   // 275 GeV -or- 135 GeV/n deuterons: Assume uniform acceptance for .5<theta<5.0 mrad
   // 100 GeV: Assume uniform acceptance for .2<theta<5.0 mrad
   // 41 GeV: Assume uniform acceptance for 1.0<theta<4.5 mrad
+  //
+  // for protons from nuclear breakup, the TOTAL momentum of the beam must be specified
+  // so 41 GeV/n He-3 is 61 GeV total, and 41 GeV/n deuteron is 82 GeV total
   float thetamin = 0;
   float thetamax = 0; 
   switch ( beam_mom_nn  ){ // switch needs an int. add a little to avoid rounding problems
@@ -266,6 +276,7 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
     thetamin = 0.5e-3;
     thetamax = 5e-3;
     break;
+  case 110 :
   case 100 :
     thetamin = 0.2e-3;
     thetamax = 5e-3;
@@ -274,6 +285,13 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
     thetamin = 1.0e-3;
     thetamax = 4.5e-3;
     break;
+  case 61 :   // 41 GeV/n He-3 beam setting
+  case 82 :   // 41 GeV/n deuteron beam setting
+  case 165 :  // 110 GeV/n He-3 beam setting
+  case 220 :  // 110 GeV/n deuteron beam setting
+    thetamin = 1.0e-6;
+    thetamax = 5.0e-3;
+	break;
   default :
     throw std::runtime_error ( "Unsupported beam momentum for far forward detectors");
   }

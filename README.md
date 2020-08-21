@@ -27,7 +27,7 @@ These are recommended for Yellow Report work. This collection will grow as the d
 These are derived from an official detector, customized or extended for specific working group needs.
 |Name| min. version | Details and Comments |
 | --- | --- | --- |
-|MatrixDetector 0.1 with Far Forward detectors | 1.1.0 | Based on the Detector Matrix from June 16 2020 with additional ZDC, B0, and Roman Pots, as found in the [Detector Forward-IR Wiki](https://wiki.bnl.gov/eicug/index.php/Yellow_Report_Detector_Forward-IR). The Build function accepts the beam momentum per nucleon as an integer parameter. Only 275, 100, 41 (e+P), and 135 (e+D) are accepted. These are ROUGH approximations only!|
+|MatrixDetector 0.1 with Far Forward detectors | 1.1.0 | Based on the Detector Matrix from June 16 2020 with additional ZDC, B0, and Roman Pots, as found in the [Detector Forward-IR Wiki](https://wiki.bnl.gov/eicug/index.php/Yellow_Report_Detector_Forward-IR). The ZDC only accepts neutrons and photons by default. The Build function accepts the beam momentum per nucleon as an integer parameter. Only 275, 100, 41 (e+P), and 135 (e+D) are accepted. These are ROUGH approximations only!|
 |MatrixDetector 0.1 with Barrel TOF | 1.1.1 | Incorporated tofBarrel from https://gitlab.com/preghenella/pid. Based on the Detector Matrix from June 16 2020. This is under active development and not intended to be used widely yet.|
 
 #### Unofficial parameterizations ####

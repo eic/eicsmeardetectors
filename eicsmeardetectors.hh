@@ -11,7 +11,7 @@
 // #include "piddetectors/tofBarrel.h"
 
 Smear::Detector BuildMatrixDetector_0_1();
-Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn=275 );
+Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn=100 );
 Smear::Detector BuildHandBook_1_2();
 Smear::Detector BuildPerfectDetector();
 Smear::Detector BuildJLEIC_0_1();
