@@ -14,7 +14,7 @@ struct qaparameters{
   std::string txtfilename="./ep_hiQ2.20x250.small.txt.gz";
   TString outfilebase="./qaplots";
   std::string outpath="./";
-  long nevents=-1;
+  long nevents=100000;
   std::vector<int> pids = {}; // sign will be ignored. 0 for all. leave empty for e, pi, k, p. 
   std::string detstring = "MATRIX_0_1"; // Capitalization does not matter
 
@@ -55,6 +55,7 @@ struct eventqacollection {
 };
 
 struct pidqacollection {
+  TH2D* Phi_theta;
   TH2D* DelE_E;
   TH2D* dPhi_p;
   TH2D* DelP_th;

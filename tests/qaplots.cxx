@@ -75,7 +75,7 @@ int main(int argc, char* argv[]){
     detector = BuildePHENIX_0_0( true );
   } else if ( qapars.detstring=="MATRIXFF" ||
 	      qapars.detstring=="MATRIXFF_0_1" ){
-    const int beam_mom_nn=100;
+    const int beam_mom_nn=220;
     detector = BuildMatrixDetector_0_1_FF( beam_mom_nn );
   } else {
     auto detfunc = BuildByName[qapars.detstring];
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]){
   // pidqacollection is defined in the header
   map<int,pidqacollection> qabook;
   // By default, use the standard particles
-  if ( qapars.pids.size() == 0 ) qapars.pids = { 11, 211, 321, 2212, 2112 }; // e, pi, K, p, n
+  if ( qapars.pids.size() == 0 ) qapars.pids = { 2212, 2112 }; // e, pi, K, p, n
   initializepidqabook ( qapars, qabook );
     
   // -------------
@@ -267,6 +267,7 @@ void FillParticleQA( map<int,pidqacollection>& qabook, const Particle* const inP
       coll.dTh_p->Fill(inParticle->GetP(), inParticle->GetTheta() - inParticleS->GetTheta());
       coll.dEta_p->Fill(inParticle->GetP(), inParticle->GetEta() - inParticleS->GetEta());
       coll.dPhi_p->Fill(inParticle->GetP(), inParticle->GetPhi() - inParticleS->GetPhi());
+	  coll.Phi_theta->Fill(inParticle->GetTheta(), inParticle->GetPhi());
     }
   }
 }
@@ -362,7 +363,7 @@ void initializepidqabook(const qaparameters& qapars, map<int,pidqacollection>& q
 
   TString s;
   float pmin = 0;
-  float pmax = 20;
+  float pmax = 275;
   int pbins = 80;
 
   float dpmin = -0.1;
@@ -370,7 +371,7 @@ void initializepidqabook(const qaparameters& qapars, map<int,pidqacollection>& q
   int dpbins = 100;
   
   float emin = 0;
-  float emax = 20;
+  float emax = 275;
   int ebins = 80;
 
   float demin = -1;
@@ -378,22 +379,22 @@ void initializepidqabook(const qaparameters& qapars, map<int,pidqacollection>& q
   int debins = 100;
 
   float thmin = 0;
-  float thmax = TMath::Pi();
+  float thmax = .080;
   int thbins = 64;
   
   float dthmin = -0.1;
   float dthmax = 0.1;
   int dthbins = 100;
 
-  float etamin = -5;
-  float etamax = 5;
+  float etamin = -6;
+  float etamax = 6;
   int etabins = 100;
   
   float detamin = -0.1;
   float detamax = 0.1;
   int detabins = 100;
 
-  float phimin = 0;
+  float phimin = 0;//-TMath::Pi();
   float phimax = TMath::TwoPi();
   int phibins = 64;
   
@@ -427,6 +428,10 @@ void initializepidqabook(const qaparameters& qapars, map<int,pidqacollection>& q
     
     s = qapars.detstring + "_dEta_p_"; s += pid;
     qabook[pid].dEta_p = new TH2D( s,s+";p;#Delta#eta", pbins, pmin, pmax, detabins, detamin, detamax );
+
+	s = qapars.detstring + "_phi_eta_"; s += pid;
+    qabook[pid].Phi_theta = new TH2D( s,s+";#theta;#phi", thbins, thmin, thmax, phibins, phimin, phimax );
+
 
   }
 
@@ -664,6 +669,9 @@ void PlotQA ( const qaparameters& qapars, eventqacollection& eventqa, map<int,pi
     auto& coll = pidcoll.second;
 
     // option "s" in Profile shows rms
+
+	coll.Phi_theta->Draw("colz");
+    gPad->SaveAs(qapars.outfilebase + qapars.detstring + ".pdf");
     
     coll.DelP_th->Draw("colz");
     gPad->SaveAs( qapars.outfilebase + qapars.detstring + ".pdf" );

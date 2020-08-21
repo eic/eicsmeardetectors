@@ -254,6 +254,9 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn = 100  ) {
   // 275 GeV -or- 135 GeV/n deuterons: Assume uniform acceptance for .5<theta<5.0 mrad
   // 100 GeV: Assume uniform acceptance for .2<theta<5.0 mrad
   // 41 GeV: Assume uniform acceptance for 1.0<theta<4.5 mrad
+  //
+  // for protons from nuclear breakup, the TOTAL momentum of the beam must be specified
+  // so 41 GeV/n He-3 is 61 GeV total, and 41 GeV/n deuteron is 82 GeV total
   float thetamin = 0;
   float thetamax = 0; 
   switch ( beam_mom_nn  ){ // switch needs an int. add a little to avoid rounding problems
@@ -262,6 +265,7 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn = 100  ) {
     thetamin = 0.5e-3;
     thetamax = 5e-3;
     break;
+  case 110 :
   case 100 :
     thetamin = 0.2e-3;
     thetamax = 5e-3;
@@ -270,6 +274,13 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn = 100  ) {
     thetamin = 1.0e-3;
     thetamax = 4.5e-3;
     break;
+  case 61 :   // 41 GeV/n He-3 beam setting
+  case 82 :   // 41 GeV/n deuteron beam setting
+  case 165 :  // 110 GeV/n He-3 beam setting
+  case 220 :  // 110 GeV/n deuteron beam setting
+    thetamin = 1.0e-6;
+    thetamax = 5.0e-3;
+	break;
   default :
     throw std::runtime_error ( "Unsupported beam momentum for far forward detectors");
   }
