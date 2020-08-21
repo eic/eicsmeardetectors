@@ -215,20 +215,26 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   // - Assume angular resolution of sigmaTheta = 3 mrad/rootE
   // sigma_E/E = stochastic%/Sqrt{E} + const% 
   // EIC Smear needs absolute sigma: sigma_E = Sqrt{const*const*E*E + stoc*stoc*E}
+  // Note: In principle,   ZDC{|theta|phi}.Accept.SetCharge(Smear::kNeutral); is the more correct
+  // way - which would also accept K0L for example.
+  // Anticipating the actual needs of users, we're going to only accept neutrons and gammas for now
   Smear::Acceptance::Zone ZDCzone( 1e-7, 4.5e-3 );
   Smear::Device ZDC(Smear::kE, "sqrt(pow( 0.05*E, 2) + pow ( 0.5,2) *E)");
   ZDC.Accept.AddZone(ZDCzone);
-  ZDC.Accept.SetCharge(Smear::kNeutral);
+  ZDC.Accept.AddParticle(2112);
+  ZDC.Accept.AddParticle(22);
   det.AddDevice(ZDC);
   
   Smear::Device ZDCtheta(Smear::kTheta, "3e-3 / sqrt(E)");
   ZDCtheta.Accept.AddZone(ZDCzone);
-  ZDCtheta.Accept.SetCharge(Smear::kNeutral);
+  ZDCtheta.Accept.AddParticle(2112);
+  ZDCtheta.Accept.AddParticle(22);
   det.AddDevice(ZDCtheta);
   
   Smear::Device ZDCphi(Smear::kPhi, "0");
   ZDCphi.Accept.AddZone(ZDCzone);
-  ZDCphi.Accept.SetCharge(Smear::kNeutral);
+  ZDCphi.Accept.AddParticle(2112);
+  ZDCphi.Accept.AddParticle(22);
   det.AddDevice(ZDCphi);
 
   // Protons
