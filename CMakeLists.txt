@@ -21,7 +21,6 @@ add_library(
    SHARED
    ${CMAKE_CURRENT_BINARY_DIR}/eicsmeardetectorsDict.cxx
    SmearMatrixDetector_0_1.cxx
-   SmearMatrixDetector_0_1_FF.cxx
    SmearHandBook_1_2.cxx
    SmearPerfectDetector.cxx
    SmearBeAST_0_1.cxx
@@ -33,7 +32,9 @@ add_library(
    SmeareSTAR_0_0.cxx
    BuildByName.cxx
    SmearWithTof.cxx
+   SmearMatrixDetector_0_1_FF.cxx
    SmearMatrixDetector_0_1_TOF.cxx
+   SmearMatrixDetector_0_1_JHFCalo.cxx
    piddetectors/tofBarrel.C
    )
 
