@@ -16,9 +16,45 @@ tofBarrel::tofBarrel(double r, double eL, double eH, double sT)
 
   //  Initialize a few constants:  Wikipedia...should be redone in a better manner...
   c       = 0.0299792458;  // cm/picosecond
+  mElectron   = 0.000511;    //GeV/c^2
   mPion   = 0.13957018;    //GeV/c^2
   mKaon   = 0.493677;      //GeV/c^2
   mProton = 0.93827208816; //GeV/c^2
+  mMuon = 0.1056583755; //GeV/c^2
+}
+
+double tofBarrel::numSigma (double eta, double p, const int pdgtruth, const PID::Species reference){
+  if (valid(eta,p)) {
+    double theta = 2.0*atan( exp(-eta) );
+    double L = radius/sin(theta);
+    double m = 0;
+    switch ( std::abs(pdgtruth)){
+    case 11   : m=mElectron; break;
+    case 211  : m=mPion; break;
+    case 2212 : m=mProton; break;
+    case 321  : m=mKaon; break;
+    default :
+      std::cerr << "tofBarrel.C: Can't handle truth particle with pdg = " << pdgtruth << std::endl;
+      return std::nan("");
+    }
+
+    double mRef=0;    
+    switch ( reference ){
+    case kElectron : mRef=mElectron; break;
+    case kPion     : mRef=mPion; break;
+    case kProton   : mRef=mProton; break;
+    case kKaon     : mRef=mKaon; break;
+    case kMuon     : mRef=mMuon; break;
+    default :
+      std::cerr << "tofBarrel.C: Can't handle reference particle with PID::type = " << reference << std::endl;
+      return std::nan("");
+    }
+    return (tof(L,p,m)-tof(L,p,mRef))/sigmaT;
+  }
+  
+  cout << "tofBarrel.C:  Invalid (eta,p) for this detector." <<endl;
+  return std::nan("");
+      
 }
 
 double tofBarrel::numSigma(double eta, double p, PID::type PID)

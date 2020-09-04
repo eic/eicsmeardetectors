@@ -25,10 +25,11 @@ public:
   tofBarrel(double radius=100, double etaLow=-1.0, double etaHigh=1.0, double sigmaT=10);
   virtual ~tofBarrel() {}
 	
-  bool   valid   (double eta, double p) {return (eta>etaLow && eta<etaHigh);}
-  double numSigma(double eta, double p,        PID::type PID);
-  double maxP    (double eta, double numSigma, PID::type PID);
-  double minP    (double eta, double numSigma, PID::type PID) {return 0;}
+  bool   valid    (double eta, double p) {return (eta>etaLow && eta<etaHigh);}
+  double numSigma (double eta, double p, const int pdgtruth, const PID::Species reference);
+  double numSigma (double eta, double p,        PID::type PID);
+  double maxP     (double eta, double numSigma, PID::type PID);
+  double minP     (double eta, double numSigma, PID::type PID) {return 0;}
   std::string name    () {return myName;}
   void   description ();
 		
@@ -45,9 +46,11 @@ protected:
   double sigmaT;   // picosecond
 
   // Physical constants (should come from elsewhere!)
+  double mElectron;    // GeV/c^2
   double mPion;    // GeV/c^2
   double mKaon;    // GeV/c^2
   double mProton;  // GeV/c^2
+  double mMuon;  // GeV/c^2
   double c;        // cm/picosecond;
 };
 	
