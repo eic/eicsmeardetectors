@@ -238,8 +238,9 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   det.AddDevice(ZDCphi);
 
   // Protons
-  // All detectors: Reasonable to assume sigma_p/p= 5% sigmaPt/Pt = 3%
-  std::string pformula  = "0.05*P";
+  // All detectors: Reasonable to assume sigma_p/p= 0.5% sigmaPt/Pt = 3%
+  // CHANGE on September 10, 2020: 5% was a typo in the source, it should be 0.5%
+  std::string pformula  = "0.005*P";
   std::string ptformula = "0.03*pT";
 
   // Assume uniform acceptance for 6<theta <20 mrad – "B0 spectrometer"
