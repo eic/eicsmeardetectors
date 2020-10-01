@@ -6,7 +6,6 @@
 #include <cctype>
 
 #include "eicsmear/smear/Detector.h"
-//#include "/home/samuel/eic/eic-smear/include/eicsmear/smear/Detector.h"
 // #include "eicsmear/smear/NumSigmaPid.h"
 // #include "piddetectors/TofBarrelSmearer.h"
 // #include "piddetectors/tofBarrel.h"

@@ -152,7 +152,7 @@ or
 setenv LD_LIBRARY_PATH .:$LD_LIBRARY_PATH
 ```
 
-Also, in case you see this error:  'eicsmear/smear/Detector.h' file not found, make sure that you set the include path like so:
+Also, in case you see this error:  'eicsmear/smear/Detector.h' file not found, make sure that you set the include path like so, before compiling:
 
 ```
 export ROOT_INCLUDE_PATH=path-to-eic-smear-install/include
