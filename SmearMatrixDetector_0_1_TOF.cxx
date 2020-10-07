@@ -83,6 +83,20 @@ Smear::Detector BuildMatrixDetector_0_1_TOF() {
   SmearPhiHadronic.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(SmearPhiHadronic);
 
+  // muons are neither hadrons nor electromgnetic
+  Smear::Acceptance::Zone AngleZoneMuon(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
+  Smear::Device SmearThetaMuon(Smear::kTheta, "0.0");
+  SmearThetaMuon.Accept.AddZone(AngleZoneMuon);
+  SmearThetaMuon.Accept.AddParticle(13);
+  SmearThetaMuon.Accept.AddParticle(-13);
+  det.AddDevice(SmearThetaMuon);
+
+  Smear::Device SmearPhiMuon(Smear::kPhi, "0.0");
+  SmearPhiMuon.Accept.AddZone(AngleZoneMuon);
+  SmearPhiMuon.Accept.AddParticle(13);
+  SmearPhiMuon.Accept.AddParticle(-13);
+  det.AddDevice(SmearPhiMuon);
+
   // emcal stretches to -4.5 < eta < 4.5
   Smear::Acceptance::Zone AngleZoneEmcal(ThetaFromEta ( 4.5 ),ThetaFromEta ( -4.5 ));
   Smear::Device SmearThetaEmcal(Smear::kTheta, "0.0");
