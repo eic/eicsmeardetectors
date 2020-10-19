@@ -73,6 +73,20 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   SmearPhiHadronic.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(SmearPhiHadronic);
 
+  // muons are neither hadrons nor electromgnetic
+  Smear::Acceptance::Zone AngleZoneMuon(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
+  Smear::Device SmearThetaMuon(Smear::kTheta, "0.0");
+  SmearThetaMuon.Accept.AddZone(AngleZoneMuon);
+  SmearThetaMuon.Accept.AddParticle(13);
+  SmearThetaMuon.Accept.AddParticle(-13);
+  det.AddDevice(SmearThetaMuon);
+
+  Smear::Device SmearPhiMuon(Smear::kPhi, "0.0");
+  SmearPhiMuon.Accept.AddZone(AngleZoneMuon);
+  SmearPhiMuon.Accept.AddParticle(13);
+  SmearPhiMuon.Accept.AddParticle(-13);
+  det.AddDevice(SmearPhiMuon);
+
   // emcal stretches to -4.5 < eta < 4.5
   Smear::Acceptance::Zone AngleZoneEmcal(ThetaFromEta ( 4.5 ),ThetaFromEta ( -4.5 ));
   Smear::Device SmearThetaEmcal(Smear::kTheta, "0.0");
@@ -238,8 +252,9 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   det.AddDevice(ZDCphi);
 
   // Protons
-  // All detectors: Reasonable to assume sigma_p/p= 5% sigmaPt/Pt = 3%
-  std::string pformula  = "0.05*P";
+  // All detectors: Reasonable to assume sigma_p/p= 0.5% sigmaPt/Pt = 3%
+  // CHANGE on September 10, 2020: 5% was a typo in the source, it should be 0.5%
+  std::string pformula  = "0.005*P";
   std::string ptformula = "0.03*pT";
 
   // Assume uniform acceptance for 6<theta <20 mrad – "B0 spectrometer"
