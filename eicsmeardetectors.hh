@@ -6,9 +6,6 @@
 #include <cctype>
 
 #include "eicsmear/smear/Detector.h"
-// #include "eicsmear/smear/NumSigmaPid.h"
-// #include "piddetectors/TofBarrelSmearer.h"
-// #include "piddetectors/tofBarrel.h"
 
 Smear::Detector BuildMatrixDetector_0_1();
 Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn=100 );
@@ -23,8 +20,7 @@ Smear::Detector BuildeSTAR_0_0();
 Smear::Detector BuildePHENIX_0_0(bool multipleScattering=true);
 
 // experimental
-Smear::Detector BuildWithTof();
-Smear::Detector BuildMatrixDetector_0_1_TOF();
+Smear::Detector BuildMatrixDetector_0_1_PID();
 
 
 /** For convenience.
