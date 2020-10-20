@@ -92,7 +92,7 @@ int main(int argc, char* argv[]){
   // Can disable warnings here.
   // Many warnings are harmless ( x or y can be smeared to values >1)
   // But it is recommended to leave it on and follow up on "inf", "nan" etc. if you test a new detector
-  // erhic::DisKinematics::BoundaryWarning=false;
+  erhic::DisKinematics::BoundaryWarning=false;
   SmearTree( detector, rootname.Data(), smearedname.Data());  
 
   // -------------
