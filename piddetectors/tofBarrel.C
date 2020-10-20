@@ -23,18 +23,19 @@ tofBarrel::tofBarrel(double r, double eL, double eH, double sT)
   mMuon = 0.1056583755; //GeV/c^2
 }
 
-double tofBarrel::numSigma (double eta, double p, const int pdgtruth, const PID::Species reference){
+double tofBarrel::numSigma (double eta, double p, const PID::Species truth, const PID::Species reference){
   if (valid(eta,p)) {
     double theta = 2.0*atan( exp(-eta) );
     double L = radius/sin(theta);
     double m = 0;
-    switch ( std::abs(pdgtruth)){
-    case 11   : m=mElectron; break;
-    case 211  : m=mPion; break;
-    case 2212 : m=mProton; break;
-    case 321  : m=mKaon; break;
+    switch ( truth ){
+    case kElectron : m=mElectron; break;
+    case kPion     : m=mPion; break;
+    case kProton   : m=mProton; break;
+    case kKaon     : m=mKaon; break;
+    case kMuon     : m=mMuon; break;
     default :
-      std::cerr << "tofBarrel.C: Can't handle truth particle with pdg = " << pdgtruth << std::endl;
+      std::cerr << "tofBarrel.C: Can't handle truth particle with PID::Species = " << truth << std::endl;
       return std::nan("");
     }
 
@@ -46,7 +47,7 @@ double tofBarrel::numSigma (double eta, double p, const int pdgtruth, const PID:
     case kKaon     : mRef=mKaon; break;
     case kMuon     : mRef=mMuon; break;
     default :
-      std::cerr << "tofBarrel.C: Can't handle reference particle with PID::type = " << reference << std::endl;
+      std::cerr << "tofBarrel.C: Can't handle reference particle with PID::Species = " << reference << std::endl;
       return std::nan("");
     }
     return (tof(L,p,m)-tof(L,p,mRef))/sigmaT;

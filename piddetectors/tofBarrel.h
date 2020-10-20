@@ -26,7 +26,7 @@ public:
   virtual ~tofBarrel() {}
 	
   bool   valid    (double eta, double p) {return (eta>etaLow && eta<etaHigh);}
-  double numSigma (double eta, double p, const int pdgtruth, const PID::Species reference);
+  double numSigma (double eta, double p, const PID::Species truth, const PID::Species reference);
   double numSigma (double eta, double p,        PID::type PID);
   double maxP     (double eta, double numSigma, PID::type PID);
   double minP     (double eta, double numSigma, PID::type PID) {return 0;}
