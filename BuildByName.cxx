@@ -18,8 +18,7 @@ Smear::Detector BuildByName (std::string dname){
        dname == "PERFECT" ) return BuildPerfectDetector();
 
   // EXPERIMENTAL
-  if ( dname == "TOF" ) return BuildWithTof();
-  if ( dname == "MATRIXTOF" ) return BuildMatrixDetector_0_1_TOF();
+  if ( dname == "MATRIXPID" ) return BuildMatrixDetector_0_1_PID();
 
   // -- Inofficial detector scripts
   // ---- BeAST
