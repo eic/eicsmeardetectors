@@ -263,16 +263,34 @@ Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn  ) {
   Smear::Device B0P(Smear::kP, pformula);
   B0P.Accept.AddZone(B0zone);
   B0P.Accept.AddParticle(2212);
+  B0P.Accept.AddParticle(22);
+  B0P.Accept.AddParticle(211);
+  B0P.Accept.AddParticle(-211);
+  B0P.Accept.AddParticle(111);
+  B0P.Accept.AddParticle(321);
+  B0P.Accept.AddParticle(-321);
   det.AddDevice(B0P);
 
   Smear::Device B0Pt(Smear::kPt, ptformula);
   B0Pt.Accept.AddZone(B0zone);
   B0Pt.Accept.AddParticle(2212);
+  B0Pt.Accept.AddParticle(22);
+  B0Pt.Accept.AddParticle(211);
+  B0Pt.Accept.AddParticle(-211);
+  B0Pt.Accept.AddParticle(111);
+  B0Pt.Accept.AddParticle(321);
+  B0Pt.Accept.AddParticle(-321);
   det.AddDevice(B0Pt);
   
   Smear::Device B0phi(Smear::kPhi, "0");
   B0phi.Accept.AddZone(B0zone);
   B0phi.Accept.AddParticle(2212);
+  B0phi.Accept.AddParticle(22);
+  B0phi.Accept.AddParticle(211);
+  B0phi.Accept.AddParticle(-211);
+  B0phi.Accept.AddParticle(111);
+  B0phi.Accept.AddParticle(321);
+  B0phi.Accept.AddParticle(-321);
   det.AddDevice(B0phi);
 
   // For protons with p_z/(beam momentum / nucleus )>.6 – "Roman pots"
