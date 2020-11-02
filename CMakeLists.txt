@@ -36,6 +36,7 @@ add_library(
    # piddetectors/tofBarrel.C
 
    SmearTrackingPreview_0_2_B1_5T.cxx
+   SmearTrackingPreview_0_2_B3T.cxx
    )
 
 # include directories
