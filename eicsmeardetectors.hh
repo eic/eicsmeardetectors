@@ -23,8 +23,8 @@ Smear::Detector BuildeSTAR_0_0();
 Smear::Detector BuildePHENIX_0_0(bool multipleScattering=true);
 
 // experimental
-Smear::Detector BuildWithTof();
-Smear::Detector BuildMatrixDetector_0_1_TOF();
+// Smear::Detector BuildMatrixDetector_0_1_TOF();
+Smear::Detector BuildTrackingPreview_0_2_B1_5T();
 
 
 /** For convenience.
