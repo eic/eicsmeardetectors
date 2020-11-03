@@ -59,6 +59,7 @@ Smear::Detector BuildTrackingPreview_0_2_B3T() {
   // ---------------------------------------
   // TODO: Better options?
   // total coverage of the handbook for tracker, ecal, and hcal is -3.5 < eta < 3.5
+  // muons no longer need special treatment! They are part of kAll
   Smear::Acceptance::Zone AngleZoneCommon(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
   Smear::Device SmearThetaCommon(Smear::kTheta, "0.0");
   SmearThetaCommon.Accept.AddZone(AngleZoneCommon);
@@ -70,20 +71,7 @@ Smear::Detector BuildTrackingPreview_0_2_B3T() {
   SmearPhiCommon.Accept.SetGenre(Smear::kAll);
   det.AddDevice(SmearPhiCommon);
 
-  // muons are neither hadrons nor electromgnetic
-  Smear::Acceptance::Zone AngleZoneMuon(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
-  Smear::Device SmearThetaMuon(Smear::kTheta, "0.0");
-  SmearThetaMuon.Accept.AddZone(AngleZoneMuon);
-  SmearThetaMuon.Accept.AddParticle(13);
-  SmearThetaMuon.Accept.AddParticle(-13);
-  det.AddDevice(SmearThetaMuon);
-
-  Smear::Device SmearPhiMuon(Smear::kPhi, "0.0");
-  SmearPhiMuon.Accept.AddZone(AngleZoneMuon);
-  SmearPhiMuon.Accept.AddParticle(13);
-  SmearPhiMuon.Accept.AddParticle(-13);
-  det.AddDevice(SmearPhiMuon);
-
+  
   // Tracking  (B = 3 T)
   // --------
   // Note: Smear::kCharged checks pdg charge, so includes muons (good)
