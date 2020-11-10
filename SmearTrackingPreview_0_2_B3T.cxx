@@ -1,24 +1,18 @@
 // Based on
 // https://physdiv.jlab.org/DetectorMatrix/
-// From June 16 2020
+// Using everything from v 0.1 from June 16 2020 except:
+// - EMCal coverage reduced to |eta|<3.5
+// - Tracking parameters from B=3T Matrix preview at
+//   https://indico.bnl.gov/event/9984/contributions/43066/attachments/31173/49186/YR_Detector_Matrix_Tracking_only_10282020.xlsx
 
-// W.r.t. to the [Detector Requirements and R&D Handbook](http://www.eicug.org/web/sites/default/files/EIC_HANDBOOK_v1.2.pdf) there have been three changes.
+// Reminder:
+// Acceptance::Zone(double theta = 0., double = TMath::Pi(),
+//      double phi = 0., double = TMath::TwoPi(),
+//      double E = 0., double = TMath::Infinity(),
+//      double p = 0., double = TMath::Infinity(),
+//      double pt = 0., double = TMath::Infinity(),
+//      double pz = -TMath::Infinity(), double = TMath::Infinity());
 
-// For the Backward Detector the Tracking Resolution column was updated as follows:
-// eta=-3.5 - -2.5: sigma_p/p ~ 0.1%×p+2.0%   ->   sigma_p/p ~ 0.1%×p &oplus;  0.5%
-// eta=-2.5 - -2.0: sigma_p/p ~ 0.1%×p+1.0%   ->   sigma_p/p ~ 0.1%×p &oplus;  0.5%
-// eta=-2.0 - -1.0: sigma_p/p ~ 0.1%×p+1.0%   ->   sigma_p/p ~ 0.05%×p &oplus;  0.5%
-// The abstract, reference files, and note sections of these fields have been updated accordingly.
-
-// Important Notes:
-// - The implementation of the original handbook matrix in SmearHandBook_1_2.cxx
-//   took some liberties and added constant terms and other specifications where
-//   they were/are missing in the matrix.
-//   The implementation here explicitly does not do so, and aims to be completely faithful
-//   to the configuration available online.
-// - Where ranges are given, the more conservative number is chosen.
-// - Without available specifications, angular resolution is assumed to be perfect.
-// -
 
 #include "eicsmear/erhic/VirtualParticle.h"
 #include "eicsmear/smear/Acceptance.h"
@@ -29,13 +23,12 @@
 #include "eicsmear/smear/PerfectID.h"
 #include <eicsmear/smear/Smear.h>
 #include <eicsmear/erhic/ParticleMC.h>
-#include "piddetectors/TofBarrelSmearer.h"
 #include "Math/Vector4D.h"
 
 // declare static --> local to this file, won't clash with others
 static double ThetaFromEta( const double eta );
 
-Smear::Detector BuildMatrixDetector_0_1_TOF() {
+Smear::Detector BuildTrackingPreview_0_2_B3T() {
   gSystem->Load("libeicsmear");
 
   // Create the detector object to hold all devices
@@ -62,26 +55,20 @@ Smear::Detector BuildMatrixDetector_0_1_TOF() {
   // from the smeared particles directly.
   det.SetEventKinematicsCalculator("NM DA JB");
 
-  // IMPORTANT: There are two traps (will be addressed in future releases):
-  //            1) If you smear E but don't provide phi, theta smearers, those values will be
-  //               set to 0, not to a fault value and not to the truth level
-  //            2) If you do provide such a smearer, pt and pz will be changed
-  //               by a consistency enforcer in Detector::Smear()
-
-
   // Perfect phi and theta for all particles
   // ---------------------------------------
-  // total coverage of the handbook for tracker and hcal is -3.5 < eta < 3.5
-  Smear::Acceptance::Zone AngleZoneHadronic(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
-  Smear::Device SmearThetaHadronic(Smear::kTheta, "0.0");
-  SmearThetaHadronic.Accept.AddZone(AngleZoneHadronic);
-  SmearThetaHadronic.Accept.SetGenre(Smear::kHadronic);
-  det.AddDevice(SmearThetaHadronic);
+  // TODO: Better options?
+  // total coverage of the handbook for tracker, ecal, and hcal is -3.5 < eta < 3.5
+  Smear::Acceptance::Zone AngleZoneCommon(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
+  Smear::Device SmearThetaCommon(Smear::kTheta, "0.0");
+  SmearThetaCommon.Accept.AddZone(AngleZoneCommon);
+  SmearThetaCommon.Accept.SetGenre(Smear::kAll);
+  det.AddDevice(SmearThetaCommon);
 
-  Smear::Device SmearPhiHadronic(Smear::kPhi, "0.0");
-  SmearPhiHadronic.Accept.AddZone(AngleZoneHadronic);
-  SmearPhiHadronic.Accept.SetGenre(Smear::kHadronic);
-  det.AddDevice(SmearPhiHadronic);
+  Smear::Device SmearPhiCommon(Smear::kPhi, "0.0");
+  SmearPhiCommon.Accept.AddZone(AngleZoneCommon);
+  SmearPhiCommon.Accept.SetGenre(Smear::kAll);
+  det.AddDevice(SmearPhiCommon);
 
   // muons are neither hadrons nor electromgnetic
   Smear::Acceptance::Zone AngleZoneMuon(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
@@ -97,55 +84,46 @@ Smear::Detector BuildMatrixDetector_0_1_TOF() {
   SmearPhiMuon.Accept.AddParticle(-13);
   det.AddDevice(SmearPhiMuon);
 
-  // emcal stretches to -4.5 < eta < 4.5
-  Smear::Acceptance::Zone AngleZoneEmcal(ThetaFromEta ( 4.5 ),ThetaFromEta ( -4.5 ));
-  Smear::Device SmearThetaEmcal(Smear::kTheta, "0.0");
-  SmearThetaEmcal.Accept.AddZone(AngleZoneEmcal);
-  SmearThetaEmcal.Accept.SetGenre(Smear::kElectromagnetic);
-  det.AddDevice(SmearThetaEmcal);
-
-  Smear::Device SmearPhiEmcal(Smear::kPhi, "0.0");
-  SmearPhiEmcal.Accept.AddZone(AngleZoneEmcal);
-  SmearPhiEmcal.Accept.SetGenre(Smear::kElectromagnetic);
-  det.AddDevice(SmearPhiEmcal);
-
-  // Tracking
+  // Tracking  (B = 3 T)
   // --------
   // Note: Smear::kCharged checks pdg charge, so includes muons (good)
-  // eta = -3.5 --  -2.0
-  // sigma_p/p ~ 0.1% p+0.5%
+  // eta = -3.5 --  -2.5
+  // sigma_p/p ~ 0.1% p + 2%
   Smear::Acceptance::Zone TrackBack1Zone(ThetaFromEta ( -2.5 ),ThetaFromEta ( -3.5 ));
-  Smear::Device TrackBack1P(Smear::kP, "sqrt( pow ( 0.001*P*P, 2) + pow ( 0.005*P, 2) )");
+  Smear::Device TrackBack1P(Smear::kP, "sqrt( pow ( 0.001*P*P, 2) + pow ( 0.02*P, 2) )");
   TrackBack1P.Accept.AddZone(TrackBack1Zone);
   TrackBack1P.Accept.SetCharge(Smear::kCharged);
   det.AddDevice(TrackBack1P);
 
-  // eta = -2.0 --  -1
-  // sigma_p/p ~ 0.05% p+ 0.5%
+  // eta = -2.5 --  -1
+  // sigma_p/p ~ 0.02% p + 1%
   Smear::Acceptance::Zone TrackBack2Zone(ThetaFromEta ( -1 ),ThetaFromEta ( -2.5 ));
-  Smear::Device TrackBack2P(Smear::kP, "sqrt( pow ( 0.0005*P*P, 2) + pow ( 0.005*P, 2) )");
+  Smear::Device TrackBack2P(Smear::kP, "sqrt( pow ( 0.0002*P*P, 2) + pow ( 0.01*P, 2) )");
   TrackBack2P.Accept.AddZone(TrackBack2Zone);
   TrackBack2P.Accept.SetCharge(Smear::kCharged);
   det.AddDevice(TrackBack2P);
 
+  // TODO: What to make of this?
+  // "200 MeV/c with 50% acceptance (similar for pi and K)"
+  // Add efficiency?
   // eta = -1 -- +1
-  // sigma_p/p ~ 0.05% p+0.5%
+  // sigma_p/p ~ 0.02% p + 0.05%
   Smear::Acceptance::Zone TrackBarrelZone(ThetaFromEta ( 1 ),ThetaFromEta ( -1 ));
-  Smear::Device TrackBarrelP(Smear::kP, "sqrt( pow ( 0.0005*P*P, 2) + pow ( 0.005*P, 2) )");
+  Smear::Device TrackBarrelP(Smear::kP, "sqrt( pow ( 0.0002*P*P, 2) + pow ( 0.005*P, 2) )");
   TrackBarrelP.Accept.AddZone(TrackBarrelZone);
   TrackBarrelP.Accept.SetCharge(Smear::kCharged);
   det.AddDevice(TrackBarrelP);
 
   // eta = 1 -- 2.5
-  // sigma_p/p ~ 0.05% p+1.0%
+  // sigma_p/p ~ 0.02% p+1%
   Smear::Acceptance::Zone TrackFwd2Zone(ThetaFromEta ( 2.5 ),ThetaFromEta ( 1 ));
-  Smear::Device TrackFwd2P(Smear::kP, "sqrt( pow ( 0.0005*P*P, 2) + pow ( 0.01*P, 2) )");
+  Smear::Device TrackFwd2P(Smear::kP, "sqrt( pow ( 0.0002*P*P, 2) + pow ( 0.01*P, 2) )");
   TrackFwd2P.Accept.AddZone(TrackFwd2Zone);
   TrackFwd2P.Accept.SetCharge(Smear::kCharged);
   det.AddDevice(TrackFwd2P);
 
   // eta = 2.5 -- 3.5
-  // sigma_p/p ~ 0.1% p+2.0%
+  // sigma_p/p ~ 0.1% p+2%
   Smear::Acceptance::Zone TrackFwd1Zone(ThetaFromEta ( 3.5 ),ThetaFromEta ( 2.5 ));
   Smear::Device TrackFwd1P(Smear::kP, "sqrt( pow ( 0.001*P*P, 2) + pow ( 0.02*P, 2) )");
   TrackFwd1P.Accept.AddZone(TrackFwd1Zone);
@@ -160,9 +138,9 @@ Smear::Detector BuildMatrixDetector_0_1_TOF() {
   // EIC Smear needs absolute sigma: sigma_E = Sqrt{const*const*E*E + stoc*stoc*E}
 
   // Back
-  // eta = -4.5 -- -2
+  // eta = -3.5 -- -2
   // stoch. = 2%
-  Smear::Acceptance::Zone EmcalBackZone(ThetaFromEta ( -2 ),ThetaFromEta ( -4.5 ));
+  Smear::Acceptance::Zone EmcalBackZone(ThetaFromEta ( -2 ),ThetaFromEta ( -3.5 ));
   Smear::Device EmcalBack(Smear::kE, "sqrt( pow ( 0.0*E,2 ) + pow( 0.02,2)*E)");
   EmcalBack.Accept.AddZone(EmcalBackZone);
   EmcalBack.Accept.SetGenre(Smear::kElectromagnetic);
@@ -178,15 +156,14 @@ Smear::Detector BuildMatrixDetector_0_1_TOF() {
   det.AddDevice(EmcalMidBack);
 
   // Forward
-  // eta = -1 -- 4.5
+  // eta = -1 -- 3.5
   // stoch. = 10-12%, use 12%
-  Smear::Acceptance::Zone EmcalFwdZone(ThetaFromEta ( 4.5 ),ThetaFromEta ( -1 ));
+  Smear::Acceptance::Zone EmcalFwdZone(ThetaFromEta ( 3.5 ),ThetaFromEta ( -1 ));
   Smear::Device EmcalFwd(Smear::kE, "sqrt( pow ( 0.0*E,2 ) + pow( 0.12,2)*E)");
   EmcalFwd.Accept.AddZone(EmcalFwdZone);
   EmcalFwd.Accept.SetGenre(Smear::kElectromagnetic);
   det.AddDevice(EmcalFwd);
 
-  // TODO: Add PID
   // Could turn on perfect PID
   // Make sure to not cover more than is covered by the other detectors.
   // Using the smallest region here, but we could add a second one for
@@ -238,13 +215,6 @@ Smear::Detector BuildMatrixDetector_0_1_TOF() {
   // Barrel vertexing: sigma_xyz ~ 20 microns, d0(z) ~ d0(r phi) ~ (20 microns)/(pT [GeV])  + 5 microns
   // Central muon detection
 
-  Smear::TofBarrelSmearer tofBarrel(100, -1.0, 1.0, 10);
-  // Restricting to the tracker barrel defined above
-  // but additional cuts are done by the detector!
-  tofBarrel.Accept.AddZone( TrackBarrelZone ); 
-  tofBarrel.Accept.SetCharge(Smear::kCharged);
-  det.AddDevice(tofBarrel);
-  
   return det;
 }
 

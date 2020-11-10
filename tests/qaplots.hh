@@ -59,6 +59,7 @@ struct eventqacollection {
 };
 
 struct pidqacollection {
+  TH2D* Phi_theta;
   TH2D* DelE_E;
   TH2D* dPhi_p;
   TH2D* DelP_th;

@@ -31,11 +31,12 @@ add_library(
    SmearePHENIX_0_0.cxx
    SmeareSTAR_0_0.cxx
    BuildByName.cxx
-   SmearWithTof.cxx
    SmearMatrixDetector_0_1_FF.cxx
-   SmearMatrixDetector_0_1_TOF.cxx
    SmearMatrixDetector_0_1_JHFCalo.cxx
-   piddetectors/tofBarrel.C
+   SmearTrackingPreview_0_2_B1_5T.cxx
+   SmearTrackingPreview_0_2_B3T.cxx
+   #   SmearMatrixDetector_0_1_TOF.cxx
+   #   piddetectors/tofBarrel.C
    )
 
 # include directories
@@ -97,6 +98,13 @@ if(BUILD_TESTS)
   add_executable(qaplots tests/qaplots.cxx tests/qaplots.hh )
   target_link_libraries(qaplots eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
   target_include_directories(qaplots
+    PRIVATE
+    ${ROOT_INCLUDE_DIRS}
+    )
+  ## a version focused on additional far forward detectors
+  add_executable(ffqaplots tests/ffqaplots.cxx tests/ffqaplots.hh )
+  target_link_libraries(ffqaplots eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_include_directories(ffqaplots
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
     )

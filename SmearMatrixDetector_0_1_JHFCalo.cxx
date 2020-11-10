@@ -25,6 +25,7 @@
 #include "eicsmear/smear/Device.h"
 #include "eicsmear/smear/Detector.h"
 #include "eicsmear/smear/Smearer.h"
+#include "eicsmear/smear/BarrelCalo.h"
 #include "eicsmear/smear/ParticleMCS.h"
 #include "eicsmear/smear/PerfectID.h"
 #include <eicsmear/smear/Smear.h>
@@ -34,7 +35,7 @@
 // declare static --> local to this file, won't clash with others
 static double ThetaFromEta( const double eta );
 
-Smear::Detector BuildMatrixDetector_0_1_JHFCalo( const int radius) {
+Smear::Detector BuildMatrixDetector_0_1_JHFCalo() {
   gSystem->Load("libeicsmear");
 
   // Create the detector object to hold all devices
@@ -77,35 +78,36 @@ Smear::Detector BuildMatrixDetector_0_1_JHFCalo( const int radius) {
   SmearThetaTracker.Accept.SetGenre(Smear::kHadronic);
   SmearThetaTracker.Accept.SetCharge(Smear::kCharged);
   det.AddDevice(SmearThetaTracker);
-
-  // Logic: cylindrical radius R
-  // z = R / tan(theta)
-  // theta = atan ( R / z )
-  // sigma on z is 50 mm / sqrt (E) /oplus 30 mm
-  // sigma_th = | dTheta / dz | * sigma_z = R / (R^2 + z^2 ) sqrt ( (50 mm/rootE)^2 + (30 mm)^2)
-  // = 1 / R * ( 1 + 1 / tanTheta^2 ) * sqrt ( (50 mm/rootE)^2 + (30 mm)^2) // cosecant not in tmath
-  TString cylradius = ""; cylradius+=radius; // cylinder radius in mm
-  TString sigzroot = "50";  // in mm, for 1/rootE term
-  TString sigzconst = "30";  // in mm, for constant term
-  TString HcalBarrelString = "1 / cylradius * (1 + 1 / pow( tan( theta ), 2 ) ) * sqrt ( pow ( sigzroot, 2 ) / E + pow( sigzconst, 2 ))";
-  HcalBarrelString.ReplaceAll ("sigzroot", sigzroot);
-  HcalBarrelString.ReplaceAll ("sigzconst", sigzconst);
-  HcalBarrelString.ReplaceAll ("cylradius", cylradius);
-  std::cout << HcalBarrelString << std::endl;
-  throw;
   
+  Smear::Device SmearPhiTracker(Smear::kPhi, "0.0");
+  SmearPhiTracker.Accept.AddZone(AngleZoneTracker);
+  SmearPhiTracker.Accept.SetGenre(Smear::kHadronic);
+  SmearPhiTracker.Accept.SetCharge(Smear::kCharged);
+  det.AddDevice(SmearPhiTracker);
 
   Smear::Acceptance::Zone AngleZoneHadronic(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
+
+  Smear::BarrelCalo HCal ( "sqrt ( 50.*50. / E + 30.*30 )",
+  			   Smear::kHadronic,
+  			   1800, 1800,
+  			   true, 0, 0,
+  			   "");
+  HCal.Accept.AddZone(AngleZoneHadronic);
+  HCal.Accept.SetGenre(Smear::kHadronic);
+  HCal.Accept.SetCharge(Smear::kNeutral);
+  det.AddDevice(HCal);
+  
   Smear::Device SmearThetaHadronic(Smear::kTheta, "0.0");
   SmearThetaHadronic.Accept.AddZone(AngleZoneHadronic);
   SmearThetaHadronic.Accept.SetGenre(Smear::kHadronic);
-  SmearThetaTracker.Accept.SetCharge(Smear::kNeutral);
-  det.AddDevice(SmearThetaHadronic);
+  SmearThetaHadronic.Accept.SetCharge(Smear::kNeutral);
+  // det.AddDevice(SmearThetaHadronic);
 
   Smear::Device SmearPhiHadronic(Smear::kPhi, "0.0");
   SmearPhiHadronic.Accept.AddZone(AngleZoneHadronic);
   SmearPhiHadronic.Accept.SetGenre(Smear::kHadronic);
-  det.AddDevice(SmearPhiHadronic);
+  SmearPhiHadronic.Accept.SetCharge(Smear::kNeutral);
+  // det.AddDevice(SmearPhiHadronic);
 
   // emcal stretches to -4.5 < eta < 4.5
   Smear::Acceptance::Zone AngleZoneEmcal(ThetaFromEta ( 4.5 ),ThetaFromEta ( -4.5 ));
@@ -118,6 +120,20 @@ Smear::Detector BuildMatrixDetector_0_1_JHFCalo( const int radius) {
   SmearPhiEmcal.Accept.AddZone(AngleZoneEmcal);
   SmearPhiEmcal.Accept.SetGenre(Smear::kElectromagnetic);
   det.AddDevice(SmearPhiEmcal);
+
+  // muons are neither hadrons nor electromgnetic
+  Smear::Acceptance::Zone AngleZoneMuon(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
+  Smear::Device SmearThetaMuon(Smear::kTheta, "0.0");
+  SmearThetaMuon.Accept.AddZone(AngleZoneMuon);
+  SmearThetaMuon.Accept.AddParticle(13);
+  SmearThetaMuon.Accept.AddParticle(-13);
+  det.AddDevice(SmearThetaMuon);
+
+  Smear::Device SmearPhiMuon(Smear::kPhi, "0.0");
+  SmearPhiMuon.Accept.AddZone(AngleZoneMuon);
+  SmearPhiMuon.Accept.AddParticle(13);
+  SmearPhiMuon.Accept.AddParticle(-13);
+  det.AddDevice(SmearPhiMuon);
 
   // Tracking
   // --------
@@ -245,7 +261,6 @@ Smear::Detector BuildMatrixDetector_0_1_JHFCalo( const int radius) {
   // Low-Q^2 tagger: -6.9<eta<-5.8: Delta_theta/theta < 1.5%; 10^-6 < Q2 < 10^-2 GeV2
   // Proton spectrometer:  eta>6.2: sigma_intrinsic(|t|)/|t| < 1%; Acceptance: 0.2 < pT < 1.2 GeV/c
   // Barrel vertexing: sigma_xyz ~ 20 microns, d0(z) ~ d0(r phi) ~ (20 microns)/(pT [GeV])  + 5 microns
-  // Central muon detection
 
   return det;
 }

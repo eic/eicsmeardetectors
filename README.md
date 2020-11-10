@@ -27,7 +27,8 @@ These are recommended for Yellow Report work. This collection will grow as the d
 These are derived from an official detector, customized or extended for specific working group needs.
 |Name| min. version | Details and Comments |
 | --- | --- | --- |
-|MatrixDetector 0.1 with Far Forward detectors | 1.1.0 | Based on the Detector Matrix from June 16 2020 with additional ZDC, B0, and Roman Pots, as found in the [Detector Forward-IR Wiki](https://wiki.bnl.gov/eicug/index.php/Yellow_Report_Detector_Forward-IR). The Build function accepts the beam momentum per nucleon as an integer parameter. Only 275, 100, 41 (e+P), and 135 (e+D) are accepted. These are ROUGH approximations only!|
+|TrackingPreview 0.2 for B=1.5T and B=3T | 1.1.0 | Based on the Detector Matrix from June 16 2020 with tracking resolution from [Tracking Only Matrix](https://indico.bnl.gov/event/9984/contributions/43066/attachments/31173/49186/YR_Detector_Matrix_Tracking_only_10282020.xlsx) for evaluation by PWGs. Shortcuts for BuildByName are ```TRACKINGPREVIEW_0_2_B1_5T```, ```TRACKING_0_2_B1_5T```, or ```TRACKING02B15``` (and similar for 3T) |
+|MatrixDetector 0.1 with Far Forward detectors | 1.1.0 | Based on the Detector Matrix from June 16 2020 with additional ZDC, B0, and Roman Pots, as found in the [Detector Forward-IR Wiki](https://wiki.bnl.gov/eicug/index.php/Yellow_Report_Detector_Forward-IR). The ZDC only accepts neutrons and photons by default. The Build function accepts the beam momentum per nucleon as an integer parameter. Only 275, 100, 41 (e+P), and 135 (e+D) are accepted. B0 accepts  pi, K, gamma, and pi0, These are ROUGH approximations only!|
 |MatrixDetector 0.1 with Barrel TOF | 1.1.1 | Incorporated tofBarrel from https://gitlab.com/preghenella/pid. Based on the Detector Matrix from June 16 2020. This is under active development and not intended to be used widely yet.|
 
 #### Unofficial parameterizations ####
@@ -152,6 +153,11 @@ or
 setenv LD_LIBRARY_PATH .:$LD_LIBRARY_PATH
 ```
 
+Also, in case you see this error:  'eicsmear/smear/Detector.h' file not found, make sure that you set the include path like so, before compiling:
+
+```
+export ROOT_INCLUDE_PATH=path-to-eic-smear-install/include
+```
 A variety of tests are generated from the tests directory:
 
 ```
