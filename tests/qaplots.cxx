@@ -383,8 +383,8 @@ void initializepidqabook(const qaparameters& qapars, map<int,pidqacollection>& q
   float detamax = 0.1;
   int detabins = 100;
 
-  float phimin = 0;
-  float phimax = TMath::TwoPi();
+  double phimin = -TMath::Pi();
+  double phimax = TMath::Pi();
   int phibins = 64;
   
   float dphimin = -0.1;

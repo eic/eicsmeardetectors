@@ -26,6 +26,7 @@
 #include "eicsmear/smear/Detector.h"
 #include "eicsmear/smear/Smearer.h"
 #include "eicsmear/smear/BarrelCalo.h"
+#include "eicsmear/smear/EndcapCalo.h"
 #include "eicsmear/smear/ParticleMCS.h"
 #include "eicsmear/smear/PerfectID.h"
 #include <eicsmear/smear/Smear.h>
@@ -85,28 +86,51 @@ Smear::Detector BuildMatrixDetector_0_1_JHFCalo() {
   SmearPhiTracker.Accept.SetCharge(Smear::kCharged);
   det.AddDevice(SmearPhiTracker);
 
-  Smear::Acceptance::Zone AngleZoneHadronic(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
+  Smear::Acceptance::Zone AngleZoneHadronicBarrel(ThetaFromEta ( 1 ),ThetaFromEta ( -1 ));
 
-  Smear::BarrelCalo HCal ( "sqrt ( 50.*50. / E + 30.*30 )",
-  			   Smear::kHadronic,
-  			   1800, 1800,
-  			   true, 0, 0,
-  			   "");
-  HCal.Accept.AddZone(AngleZoneHadronic);
-  HCal.Accept.SetGenre(Smear::kHadronic);
-  HCal.Accept.SetCharge(Smear::kNeutral);
-  det.AddDevice(HCal);
+  Smear::BarrelCalo BarrelHCal ( "sqrt ( 50.*50. / E + 30.*30 )",
+				 Smear::kHadronic,
+				 1800, 1800,
+				 true, 0, 0,
+				 "");
+  BarrelHCal.Accept.AddZone(AngleZoneHadronicBarrel);
+  BarrelHCal.Accept.SetGenre(Smear::kHadronic);
+  BarrelHCal.Accept.SetCharge(Smear::kNeutral);
+  det.AddDevice(BarrelHCal);
   
-  Smear::Device SmearThetaHadronic(Smear::kTheta, "0.0");
-  SmearThetaHadronic.Accept.AddZone(AngleZoneHadronic);
-  SmearThetaHadronic.Accept.SetGenre(Smear::kHadronic);
-  SmearThetaHadronic.Accept.SetCharge(Smear::kNeutral);
+  Smear::Acceptance::Zone AngleZoneHadronicBack(ThetaFromEta ( -1 ),ThetaFromEta ( -3.5 ));  
+  Smear::EndcapCalo BackHCal ( "sqrt ( 50.*50. / E + 30.*30 )",
+				 Smear::kHadronic,
+				 2000,
+				 true, 0, 0,
+				 "");
+  BackHCal.Accept.AddZone(AngleZoneHadronicBack);
+  BackHCal.Accept.SetGenre(Smear::kHadronic);
+  BackHCal.Accept.SetCharge(Smear::kNeutral);
+  det.AddDevice(BackHCal);
+  
+  Smear::Acceptance::Zone AngleZoneHadronicForward(ThetaFromEta ( 3.5 ),ThetaFromEta ( 1 ));  
+  Smear::EndcapCalo ForwardHCal ( "sqrt ( 50.*50. / E + 30.*30 )",
+				 Smear::kHadronic,
+				 2000,
+				 true, 0, 0,
+				 "");
+  ForwardHCal.Accept.AddZone(AngleZoneHadronicForward);
+  ForwardHCal.Accept.SetGenre(Smear::kHadronic);
+  ForwardHCal.Accept.SetCharge(Smear::kNeutral);
+  det.AddDevice(ForwardHCal);
+
+  // Smear::Acceptance::Zone AngleZoneHadronic(ThetaFromEta ( 3.5 ),ThetaFromEta ( -3.5 ));
+  // Smear::Device SmearThetaHadronic(Smear::kTheta, "0.0");
+  // SmearThetaHadronic.Accept.AddZone(AngleZoneHadronic);
+  // SmearThetaHadronic.Accept.SetGenre(Smear::kHadronic);
+  // SmearThetaHadronic.Accept.SetCharge(Smear::kNeutral);
   // det.AddDevice(SmearThetaHadronic);
 
-  Smear::Device SmearPhiHadronic(Smear::kPhi, "0.0");
-  SmearPhiHadronic.Accept.AddZone(AngleZoneHadronic);
-  SmearPhiHadronic.Accept.SetGenre(Smear::kHadronic);
-  SmearPhiHadronic.Accept.SetCharge(Smear::kNeutral);
+  // Smear::Device SmearPhiHadronic(Smear::kPhi, "0.0");
+  // SmearPhiHadronic.Accept.AddZone(AngleZoneHadronic);
+  // SmearPhiHadronic.Accept.SetGenre(Smear::kHadronic);
+  // SmearPhiHadronic.Accept.SetCharge(Smear::kNeutral);
   // det.AddDevice(SmearPhiHadronic);
 
   // emcal stretches to -4.5 < eta < 4.5
