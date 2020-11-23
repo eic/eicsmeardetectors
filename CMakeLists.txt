@@ -20,6 +20,8 @@ add_library(
    eicsmeardetectors
    SHARED
    ${CMAKE_CURRENT_BINARY_DIR}/eicsmeardetectorsDict.cxx
+   SmearMatrixDetector_0_2_B1_5T.cxx
+   SmearMatrixDetector_0_2_B3T.cxx
    SmearMatrixDetector_0_1.cxx
    SmearMatrixDetector_0_1_FF.cxx
    SmearHandBook_1_2.cxx

@@ -10,6 +10,8 @@
 // #include "piddetectors/TofBarrelSmearer.h"
 // #include "piddetectors/tofBarrel.h"
 
+Smear::Detector BuildMatrixDetector_0_2_B1_5T();
+Smear::Detector BuildMatrixDetector_0_2_B3T();
 Smear::Detector BuildMatrixDetector_0_1();
 Smear::Detector BuildMatrixDetector_0_1_FF( const int beam_mom_nn=100 );
 Smear::Detector BuildHandBook_1_2();

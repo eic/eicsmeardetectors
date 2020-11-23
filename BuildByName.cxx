@@ -5,9 +5,20 @@ Smear::Detector BuildByName (std::string dname){
   for (auto & c: dname) c = toupper(static_cast<unsigned char>(c));
   
   // -- Online, OFFICIAL, matrix from https://physdiv.jlab.org/DetectorMatrix
+  // From November 21, 2020
+  if ( dname == "MATRIXDETECTOR_0_2_B1_5T"  ||
+       dname == "MATRIX_0_2_B1_5T" ||
+       dname == "MATRIX02B15" ) return BuildMatrixDetector_0_2_B1_5T();
+
+  if ( dname == "MATRIXDETECTOR_0_2_B3T"  ||
+       dname == "MATRIX_0_2_B3T" ||
+       dname == "MATRIX02B3" ) return BuildMatrixDetector_0_2_B3T();
+
+  // -- Online, OFFICIAL, original matrix from https://physdiv.jlab.org/DetectorMatrix
+  // From June 16 2020
   if ( dname == "MATRIXDETECTOR_0_1"  ||
        dname == "MATRIX_0_1" ||
-       dname == "MATRIX" ) return BuildMatrixDetector_0_1();
+       dname == "MATRIX01" ) return BuildMatrixDetector_0_1();
   
   // -- Handbook matrix from http://www.eicug.org/web/sites/default/files/EIC_HANDBOOK_v1.2.pdf
   if ( dname == "HANDBOOK_1_2" ||
