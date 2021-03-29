@@ -224,22 +224,38 @@ Smear::Detector BuildCore_0_1_B3T() {
   EmcalForwardBarrel.Accept.SetGenre(Smear::kElectromagnetic);
   det.AddDevice(EmcalForwardBarrel);
 
-  // Forward - assume Matrix specs (waiting for Craig Woody's talk)
-  // eta = 1 -- 3.5
+  // Forward outer - assume Matrix specs (waiting for Craig Woody's talk)
+  // eta = 1 -- 2
   // E > 50 MeV not used because it suppresses smeared-up particles
   // "2%/E + (4*-12)%/sqrtE  + 2%  Upper limit achievable with 40cm space
   // *Better resolution requires ~65 cm   space allocated"
   // choosing
   // 2%/E  + 12%/sqrtE + 2%  
   // A       B           C
-  Smear::Acceptance::Zone EmcalFwdZone(ThetaFromEta ( 3.5 ),ThetaFromEta ( 1 )); // E
-  Smear::Device EmcalFwd(Smear::kE, "sqrt( pow ( 0.02,2 ) + pow( 0.12,2)*E + pow ( 0.02*E,2 ) )");
-  EmcalFwd.Accept.AddZone(EmcalFwdZone);
-  EmcalFwd.Accept.SetGenre(Smear::kElectromagnetic);
-  det.AddDevice(EmcalFwd);
+  Smear::Acceptance::Zone EmcalFwdOuterZone(ThetaFromEta ( 2 ),ThetaFromEta ( 1 )); // E
+  Smear::Device EmcalFwdOuter(Smear::kE, "sqrt( pow ( 0.02,2 ) + pow( 0.12,2)*E + pow ( 0.02*E,2 ) )");
+  EmcalFwdOuter.Accept.AddZone(EmcalFwdOuterZone);
+  EmcalFwdOuter.Accept.SetGenre(Smear::kElectromagnetic);
+  det.AddDevice(EmcalFwdOuter);
+
+  // > Shashlyk, Pb/Sc 5.5 x5.5, 8% stochastic, 2% constant.
+
+  // Forward inner - Shashlyk guess
+  // eta = 2 -- 3.5
+  // E > 50 MeV not used because it suppresses smeared-up particles
+  // Optimistic Shashlyk
+  // 2%/E  + 8%/sqrtE + 2%  
+  // A       B           C
+  Smear::Acceptance::Zone EmcalFwdInnerZone(ThetaFromEta ( 3.5 ),ThetaFromEta ( 2 )); // E
+  Smear::Device EmcalFwdInner(Smear::kE, "sqrt( pow ( 0.02,2 ) + pow( 0.8,2)*E + pow ( 0.02*E,2 ) )");
+  EmcalFwdInner.Accept.AddZone(EmcalFwdInnerZone);
+  EmcalFwdInner.Accept.SetGenre(Smear::kElectromagnetic);
+  det.AddDevice(EmcalFwdInner);
+
 
   // Hadronic  Calorimeters
   // Assume marix specs (waiting for Oleg Tsai's talk)
+  // Except, aspire to 35 % / sqrt(E)  + 2% forward
   // ----------------------
   // Note: kHadronic == |pdg|>110.
 
@@ -267,21 +283,12 @@ Smear::Detector BuildCore_0_1_B3T() {
   // Forward
   // eta = 1 -- 3.5
   // E>500 MeV not used because it suppresses smeared-up particles
-  // stoch. = 50%, const = 10%
-  // "(35%/sqrtE not achievable)"
+  // stoch. = 35%, const = 2% (aspirational goal)
   Smear::Acceptance::Zone HcalFwdZone(ThetaFromEta ( 3.5 ),ThetaFromEta ( 1 ));
-  Smear::Device HcalFwd(Smear::kE, "sqrt(pow( 0.1*E, 2) + pow ( 0.5,2) *E)");
+  Smear::Device HcalFwd(Smear::kE, "sqrt(pow( 0.02*E, 2) + pow ( 0.35,2) *E)");
   HcalFwd.Accept.AddZone(HcalFwdZone);
   HcalFwd.Accept.SetGenre(Smear::kHadronic);
   det.AddDevice(HcalFwd);
-
-  // Not covered:
-  // Tracker material budget X/X0 <~5%
-  // Tracker pointing resolution
-  // Low-Q^2 tagger: -6.9<eta<-5.8: Delta_theta/theta < 1.5%; 10^-6 < Q2 < 10^-2 GeV2
-  // Proton spectrometer:  eta>6.2: sigma_intrinsic(|t|)/|t| < 1%; Acceptance: 0.2 < pT < 1.2 GeV/c
-  // Barrel vertexing: sigma_xyz ~ 20 microns, d0(z) ~ d0(r phi) ~ (20 microns)/(pT [GeV])  + 5 microns
-  // Central muon detection
 
   return det;
 }
