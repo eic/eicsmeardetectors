@@ -29,6 +29,10 @@ Smear::Detector BuildePHENIX_0_0(bool multipleScattering=true);
 Smear::Detector BuildTrackingPreview_0_2_B1_5T();
 Smear::Detector BuildTrackingPreview_0_2_B3T();
 
+// experimental
+Smear::Detector BuildCore_0_1_B3T();
+
+
 
 /** For convenience.
     Not case-sensitive.Should be all upper case.

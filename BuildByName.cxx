@@ -31,6 +31,9 @@ Smear::Detector BuildByName (std::string dname){
   // EXPERIMENTAL
   // if ( dname == "MATRIXTOF" ) return BuildMatrixDetector_0_1_TOF();
   
+  if ( dname == "CORE_0_1_B3"  ||
+       dname == "COREB3" ) return BuildCore_0_1_B3T();
+
   if ( dname == "TRACKINGPREVIEW_0_2_B1_5T"  ||
        dname == "TRACKING_0_2_B1_5T" ||
        dname == "TRACKING02B15" ) return BuildTrackingPreview_0_2_B1_5T();
