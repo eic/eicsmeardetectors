@@ -40,6 +40,7 @@ add_library(
    SmearTrackingPreview_0_2_B1_5T.cxx
    SmearTrackingPreview_0_2_B3T.cxx
    SmearCore_0_1_B3T.cxx
+   SmearCore_0_1.cxx
    )
 
 # include directories

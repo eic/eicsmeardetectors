@@ -288,6 +288,10 @@ qaparameters ParseArguments ( int argc, char* argv[] ){
 	  if (++parg == arguments.end() ){ argsokay=false; break; }
 	  qapars.beam_mom_nn = std::stoi(parg->data());
 	}
+	if ( TString(qapars.detstring).Contains("CORE") && !TString(qapars.detstring).Contains("B")){
+	  if (++parg == arguments.end() ){ argsokay=false; break; }
+	  qapars.beam_mom_nn = std::stod(parg->data());
+	}
       } else {
 	argsokay=false;
 	break;

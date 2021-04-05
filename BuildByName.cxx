@@ -77,14 +77,12 @@ Smear::Detector BuildByName (std::string dname){
 };
 
 /** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
-    for detectors with a bool parameter
+    for detectors with an int parameter
 */
-Smear::Detector BuildByName ( std::string dname, const bool b){
+Smear::Detector BuildByName ( std::string dname, const int i){
   // transform to upper case
   for (auto & c: dname) c = toupper(static_cast<unsigned char>(c));
   
-  if ( dname == "EPHENIX_0_0" ||
-       dname == "EPHENIX" ) return  BuildePHENIX_0_0( b ); // b is multipleScattering
   
   std::cerr << "Detector sepcified as " << dname
 	    << " not recognized or empty." << std::endl;
@@ -92,17 +90,30 @@ Smear::Detector BuildByName ( std::string dname, const bool b){
   return Smear::Detector();
 };
 
-Smear::Detector BuildByName ( std::string dname, const int i){
+/** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
+    for detectors with a parameter
+*/
+Smear::Detector BuildByName ( std::string dname, const double d){
   // transform to upper case
   for (auto & c: dname) c = toupper(static_cast<unsigned char>(c));
   
+  // -- d is the B field for tracking
+  if ( dname == "CORE_0_1"  ||
+       dname == "CORE" ) return BuildCore_0_1( d );
+  
   // -- UNOFFICIAL addition of far forward detectors to the matrix
+  // integer i is beam_mom_nn
   if ( dname == "MATRIXDETECTOR_0_1_FF"  ||
        dname == "MATRIX_0_1_FF" ||
-       dname == "MATRIXFF" ) return BuildMatrixDetector_0_1_FF( i ); // i is beam_mom_nn
+       dname == "MATRIXFF" ) return BuildMatrixDetector_0_1_FF( int(d) ); 
+
+  // b is a boolean for multipleScattering
+  if ( dname == "EPHENIX_0_0" ||
+       dname == "EPHENIX" ) return  BuildePHENIX_0_0( bool(d) ); 
   
   std::cerr << "Detector sepcified as " << dname
 	    << " not recognized or empty." << std::endl;
+
   throw;
   return Smear::Detector();
 };
