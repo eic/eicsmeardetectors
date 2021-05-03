@@ -105,6 +105,13 @@ if(BUILD_TESTS)
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
     )
+  ## QA plots from particle gun
+  add_executable(pgunqa tests/pgunqa.cxx tests/qaplots.hh )
+  target_link_libraries(pgunqa eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_include_directories(pgunqa
+    PRIVATE
+    ${ROOT_INCLUDE_DIRS}
+    )
   ## a version focused on additional far forward detectors
   add_executable(ffqaplots tests/ffqaplots.cxx tests/ffqaplots.hh )
   target_link_libraries(ffqaplots eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
