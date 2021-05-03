@@ -29,6 +29,11 @@ Smear::Detector BuildePHENIX_0_0(bool multipleScattering=true);
 Smear::Detector BuildTrackingPreview_0_2_B1_5T();
 Smear::Detector BuildTrackingPreview_0_2_B3T();
 
+// experimental
+Smear::Detector BuildCore_0_1_B3T();
+Smear::Detector BuildCore_0_1( const double Bfield );
+
+
 
 /** For convenience.
     Not case-sensitive.Should be all upper case.
@@ -50,14 +55,8 @@ Smear::Detector BuildTrackingPreview_0_2_B3T();
 Smear::Detector BuildByName (std::string dname);
 
 /** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
-    for detectors with a bool parameter
+    for detectors with a parameter
 */
-Smear::Detector BuildByName ( std::string dname, const bool b);
+Smear::Detector BuildByName ( std::string dname, const double d);
 
-
-/** Overloaded version of  Smear::Detector BuildByName ( std::string dname )
-    for detectors with an int parameter
-*/
-Smear::Detector BuildByName ( std::string dname, const int i);
-  
 #endif //EICSMEARDETECTORS_HH

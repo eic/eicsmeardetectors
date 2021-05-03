@@ -39,6 +39,8 @@ add_library(
 
    SmearTrackingPreview_0_2_B1_5T.cxx
    SmearTrackingPreview_0_2_B3T.cxx
+   SmearCore_0_1_B3T.cxx
+   SmearCore_0_1.cxx
    )
 
 # include directories
@@ -100,6 +102,13 @@ if(BUILD_TESTS)
   add_executable(qaplots tests/qaplots.cxx tests/qaplots.hh )
   target_link_libraries(qaplots eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
   target_include_directories(qaplots
+    PRIVATE
+    ${ROOT_INCLUDE_DIRS}
+    )
+  ## QA plots from particle gun
+  add_executable(pgunqa tests/pgunqa.cxx tests/qaplots.hh )
+  target_link_libraries(pgunqa eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_include_directories(pgunqa
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
     )
