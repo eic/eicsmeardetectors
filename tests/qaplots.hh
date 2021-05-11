@@ -17,7 +17,7 @@ struct qaparameters{
   long nevents=-1;
   long nparticles=100000; // only used for particle gun version that reuses this struct
   std::vector<int> pids = {}; // sign will be ignored. 0 for all. leave empty for e, pi, k, p. 
-  std::string detstring = "MATRIX_0_1"; // Capitalization does not matter
+  std::string detstring = "MATRIX_0_2_B3T"; // Capitalization does not matter
 
   long usedevents=-1;// pure convenience so I can access the true number when nevents=-1;
 
