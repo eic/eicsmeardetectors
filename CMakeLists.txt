@@ -10,7 +10,7 @@ option(BUILD_TESTS "Build tests executables" OFF)
 find_package(eicsmear REQUIRED)
 
 # Need ROOT as well
-find_package(ROOT 6.10 REQUIRED)
+find_package(ROOT 6.20 REQUIRED)
 
 ##############################################################################################################
 
@@ -81,7 +81,9 @@ endif()
 ##############################################################################################################
 
 ## Build the library
-target_link_libraries(eicsmeardetectors eicsmear::eicsmear )
+## There's no need to _link_ to root, but we need to pick up
+## the c++1x standard for included files
+target_link_libraries(eicsmeardetectors eicsmear::eicsmear ROOT::Rint )
 
 ##############################################################################################################
 
@@ -92,7 +94,7 @@ if(BUILD_TESTS)
 
   ## Simple particle gun
   add_executable(particlegun tests/particlegun.cxx)
-  target_link_libraries(particlegun eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_link_libraries(particlegun eicsmeardetectors eicsmear::eicsmear ROOT::Rint )
   target_include_directories(particlegun
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
@@ -100,21 +102,21 @@ if(BUILD_TESTS)
 
   ## QA plots
   add_executable(qaplots tests/qaplots.cxx tests/qaplots.hh )
-  target_link_libraries(qaplots eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_link_libraries(qaplots eicsmeardetectors eicsmear::eicsmear ROOT::Rint )
   target_include_directories(qaplots
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
     )
   ## QA plots from particle gun
   add_executable(pgunqa tests/pgunqa.cxx tests/qaplots.hh )
-  target_link_libraries(pgunqa eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_link_libraries(pgunqa eicsmeardetectors eicsmear::eicsmear ROOT::Rint )
   target_include_directories(pgunqa
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
     )
   ## a version focused on additional far forward detectors
   add_executable(ffqaplots tests/ffqaplots.cxx tests/ffqaplots.hh )
-  target_link_libraries(ffqaplots eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_link_libraries(ffqaplots eicsmeardetectors eicsmear::eicsmear ROOT::Rint )
   target_include_directories(ffqaplots
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
@@ -122,7 +124,7 @@ if(BUILD_TESTS)
 
   ## simple tree builder
   add_executable(test_simple_buildtree tests/test_simple_buildtree.cxx)
-  target_link_libraries(test_simple_buildtree eicsmeardetectors eicsmear::eicsmear ${ROOT_LIBRARIES} )
+  target_link_libraries(test_simple_buildtree eicsmeardetectors eicsmear::eicsmear ROOT::Rint ROOT:Tree )
   target_include_directories(test_simple_buildtree
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
