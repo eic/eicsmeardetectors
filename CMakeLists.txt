@@ -124,7 +124,7 @@ if(BUILD_TESTS)
 
   ## simple tree builder
   add_executable(test_simple_buildtree tests/test_simple_buildtree.cxx)
-  target_link_libraries(test_simple_buildtree eicsmeardetectors eicsmear::eicsmear ROOT::Rint ROOT:Tree )
+  target_link_libraries(test_simple_buildtree eicsmeardetectors eicsmear::eicsmear ROOT::Rint  )
   target_include_directories(test_simple_buildtree
     PRIVATE
     ${ROOT_INCLUDE_DIRS}
